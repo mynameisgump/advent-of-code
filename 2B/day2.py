@@ -2,10 +2,10 @@ if __name__ == "__main__":
     codes = [line.rstrip('\n') for line in open("input.txt")][0].split(',')
     
     #Before program instructions
-
-            
-    codes[1] = 12
-    codes[2] = 2
+    #codes[1] = 12
+    #codes[2] = 2
+    codes[1] = 84
+    codes[2] = 44
 
     pointer = 0
     while (pointer<len(codes)):
