@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     codes = [line.rstrip('\n') for line in open("input2.txt")][0].split(',')
-    codes[1] = 12
-    codes[2] = 2
+    #codes[1] = 12
+    #codes[2] = 2
     pointer = 0
     while (pointer<len(codes)):
         action = str(codes[pointer]).zfill(5)
@@ -9,8 +9,6 @@ if __name__ == "__main__":
         var4_codes = ["01","02"]
         var2_codes = ["03","04"]
         var_codes = ["99"]
-        print(pointer)
-        print(action)
         if (op in var4_codes):
             if (action[-3] == "0"):
                 adr1 = int(codes[pointer+1])
@@ -26,14 +24,6 @@ if __name__ == "__main__":
             
             dest = int(codes[pointer+3])
 
-        if (op in var2_codes):
-            var_in = input("USER INPUT REQUIRED: ")
-            if (action[-4] == "1"):
-                adr1 = int(codes[int(var_in)])
-                val = int(codes[adr1])
-            if (action[-4] == "0"):
-                val = int(var_in)
-            dest = int(codes[pointer+1])
 
         if (op == "01"):
             result = val1+val2
@@ -44,6 +34,7 @@ if __name__ == "__main__":
             codes[dest] = result
             pointer += 4
         elif (op == "03"):
+            val = input("USER INPUT REQUIRED: ")
             dest = int(codes[pointer+1])
             codes[dest] = str(val)
             pointer += 2
@@ -54,5 +45,4 @@ if __name__ == "__main__":
             pointer += 2
         elif(op == "99"): 
             pointer = len(codes)
-    print(codes[0])
 
