@@ -10,10 +10,9 @@ class BingoCard:
     def check_bingo(self, numbers_drawn):
         cases = self.rows+self.get_columns()
         cases = [[num for num in case if num in numbers_drawn] for case in cases]
+        
         for case in cases:
             if len(case) == 5:
-                #print("BINGO")
-                #print(case)
                 return True
         return False
         
@@ -21,15 +20,12 @@ class BingoCard:
         marked = [[num for num in row if num in numbers_drawn] for row in self.rows]
         unmarked = [[int(num) for num in row if num not in numbers_drawn] for row in self.rows]
         unmarked_score = sum([sum(row) for row in unmarked])
-        print(unmarked_score)
-        print(int(numbers_drawn[-1:][0]))
-        print("Final Score: ")
-        print(unmarked_score*int(numbers_drawn[-1:][0]))
+        return unmarked_score*int(numbers_drawn[-1:][0])
 
     def get_columns(self):
         columns = []
-        for i in range(len(rows)):
-            columns.append([row[i] for row in rows])
+        for i in range(len(self.rows)):
+            columns.append([row[i] for row in self.rows])
         return columns
 
 
@@ -64,26 +60,34 @@ if __name__ == "__main__":
         current_numbers = []
         bingo = False
         winners = []
-        print(len(cards))
+        #print(len(cards))
+        #print(numbers_drawn)
+        number_appends = 0
         for number in numbers_drawn:
             current_numbers.append(number)
 
-
-            card_count = 0
             for card in cards:
                 card_bingo = card.check_bingo(current_numbers)
 
                 if card_bingo == True:
-                    print("Bingo")
-                    winners.append(card)
-                    #print(len(winners))
-                card_count += 1
+                    #print("Bingo")
+                    winner_names = [pair[0].board_num for pair in winners]
+                    if card.board_num not in winner_names:
+                        winners.append([card,card.check_score(current_numbers)])
+
+        # Guessed 31010
+        for winner in winners:
+            print(winner)
             
-            if len(winners) > 0:
-                scores = 0
-                for winner in winners:
-                    winner.check_score(current_numbers) 
-                break
+        last_winner = winners[-1:]
+        print()
+        print(last_winner)
+        
+            #if len(winners) > 0:
+            #    scores = 0
+            #    for winner in winners:
+            #        winner.check_score(current_numbers) 
+            #    break
 
             #print(current_numbers)
         #print("Post Search")
