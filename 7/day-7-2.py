@@ -1,5 +1,9 @@
+import sys
+ 
+sys.setrecursionlimit(10**6)
+
 def check_position(crabs,position):
-    return sum([abs(position-int(crab)) for crab in crabs])
+    return sum([recursive_add(abs(position-int(crab))) for crab in crabs])
 
 def recursive_add(number):
     if number == 0:
@@ -19,6 +23,7 @@ if __name__ == "__main__":
 
         min_fuel = 1000000000
         for i in range(2000):
+            print(i)
             fuel = check_position(crabs,i)
             if fuel < min_fuel:
                 min_fuel = fuel
