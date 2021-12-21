@@ -1,5 +1,5 @@
-from typing import final
 
+        
 
 if __name__ == "__main__":
     filename="input.txt"
@@ -15,8 +15,10 @@ if __name__ == "__main__":
                 transitionDict[transition[0]] = transition[1]
         print(transitionDict)
 
-        steps = 10
+        steps = 40
+        curStep = 0
         for step in range(steps):
+            print("Step: "+str(curStep))
             finalString = ""
             #stringLen = len(mainString)
             curIndex = 0
