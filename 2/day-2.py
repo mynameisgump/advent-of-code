@@ -14,23 +14,10 @@ if __name__ == "__main__":
         "CZ": 3,
     }
 
-    winDict = {
-        "AX": "Z",
-        "BX": "X",
-        "CX": "Y",
-        "AY": "X",
-        "BY": "Y",
-        "CY": "Z",
-        "AZ": "X",
-        "BZ": "Z",
-        "CZ": "X",
-    }
-
-
     with open(filename) as f:
         lines = [line.rstrip() for line in f]
         gameScore = 0
         for line in lines:
             game = line.split(" ")
-            gameScore += rpcDict[game[1]]+gameDict[game[0]+game[1]]
+            gameScore += rpcDict[game[1]]+rpcDict[game[0]+game[1]]
         print(gameScore)

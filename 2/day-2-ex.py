@@ -2,13 +2,16 @@ if __name__ == "__main__":
     filename="input.txt"
 
     rpcDict = {"X": 1,"Y": 2, "Z": 3}
+    
     scoreDict = {
         "AX": 3,
         "BX": 0,
         "CX": 6,
+
         "AY": 6,
         "BY": 3,
         "CY": 0,
+        
         "AZ": 0,
         "BZ": 6,
         "CZ": 3,
@@ -34,8 +37,6 @@ if __name__ == "__main__":
         gameScore = 0
         for line in lines:
             game = line.split(" ")
-            #gameScore += rpcDict[game[1]]+scoreDict[game[0]+game[1]]
-            
             
             choosenHand = winDict[game[0]+game[1]]
             gameScore += rpcDict[choosenHand]+scoreDict[game[0]+choosenHand]
