@@ -7,3 +7,7 @@ def divide_chunks(l, n):
 def splitstring(str):
     str1, str2 = str[:len(str)//2], str[len(str)//2:]
     return str1, str2
+
+# Divide into chunks
+def split(n, line):
+    return [line[i:i+n] for i in range(0, len(line), n)]
