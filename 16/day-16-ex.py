@@ -12,32 +12,52 @@ for line in lines:
     get_flow[line[0][0]] = line[0][1]
     get_connections[line[0][0]] = line[1]
     print(line)
+total_valves = len(get_flow.keys())
 
-
-def highest_pressure(valve,best,opened,total,minutes,get_flow,get_connections):
-    if minutes == 0:
+def highest_pressure(valve,best,opened,total,minutes,total_valves,get_flow,get_connections):
+    # print()
+    # print("Valve: ",valve)
+    # print("Best: ",best)
+    # print("Minutes: ",minutes)
+    # print("Total",total)
+    if minutes <= 0:
+        # print()
+        # print("Returning")
+        return total
+    if len(opened) == total_valves:
+        while minutes > 0:
+            for open_valve in opened:
+                open_flow = get_flow[open_valve]
+                total += open_flow
+            minutes -= 1
         return total
     actions = ["MOVE","OPEN"]
     flow = get_flow[valve]
     children = get_connections[valve]
-    cur_opened = opened.clone()
-    if flow == 0 or valve in opened:
+    #cur_opened = opened.clone()
+    if flow == 0:
+        opened.append(valve)
+    if valve in opened:
         actions = ["MOVE"]
     for open_valve in opened:
         open_flow = get_flow[open_valve]
-        total += open_flow*minutes
-    
+        total += open_flow
+    # print()
+    # print("Starting Child Loop:")
     for child_valve in children:
         for action in actions:
             if action == "MOVE":
-                child_total = highest_pressure(child_valve,best,opened,total,minutes-1,get_flow,get_connections)
+                child_total = highest_pressure(child_valve,best,opened,total,minutes-1,total_valves,get_flow,get_connections)
             elif action == "OPEN":
-                child_total = highest_pressure(valve,best,opened,total,minutes-1,get_flow,get_connections)
+                if valve not in opened:
+                    opened.append(valve)
+                child_total = highest_pressure(valve,best,opened,total,minutes-1,total_valves,get_flow,get_connections)
             if child_total > best:
-                return child_total
-
-
-
+                best = child_total
+    return best
+#best = 0 
+best = highest_pressure("AA",0,[],0,30,total_valves,get_flow,get_connections)
+print(best)
 
 # def heur(flowrate,time):
 #     return flowrate*time
