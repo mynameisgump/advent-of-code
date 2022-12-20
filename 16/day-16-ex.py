@@ -12,7 +12,8 @@ for line in lines:
     get_flow[line[0][0]] = line[0][1]
     get_connections[line[0][0]] = line[1]
     print(line)
-total_valves = len(get_flow.keys())
+non_zero = {k:v for k,v in get_flow.items() if v != 0}
+total_valves = len(non_zero.keys())
 
 def highest_pressure(valve,best,opened,total,minutes,total_valves,get_flow,get_connections):
     # print()
@@ -31,13 +32,12 @@ def highest_pressure(valve,best,opened,total,minutes,total_valves,get_flow,get_c
                 total += open_flow
             minutes -= 1
         return total
+        
     actions = ["MOVE","OPEN"]
     flow = get_flow[valve]
     children = get_connections[valve]
     #cur_opened = opened.clone()
-    if flow == 0:
-        opened.append(valve)
-    if valve in opened:
+    if flow == 0 and valve in opened:
         actions = ["MOVE"]
     for open_valve in opened:
         open_flow = get_flow[open_valve]
@@ -56,7 +56,7 @@ def highest_pressure(valve,best,opened,total,minutes,total_valves,get_flow,get_c
                 best = child_total
     return best
 #best = 0 
-best = highest_pressure("AA",0,[],0,30,total_valves,get_flow,get_connections)
+best = highest_pressure("AA",0,[],0,31,total_valves,get_flow,get_connections)
 print(best)
 
 # def heur(flowrate,time):
