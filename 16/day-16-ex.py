@@ -6,77 +6,78 @@ with open(filename) as f:
         lines[i][0] = [line[0][:8][-2:],int(line[0].split("=")[1])]
         lines[i][1] = line[1].replace(" tunnels lead to valves ","").replace(" tunnel leads to valve ","").split(", ")
 
-flow = {}
-paths = {}
+get_flow = {}
+get_connections = {}
 for line in lines:
-    flow[line[0][0]] = line[0][1]
-    paths[line[0][0]] = line[1]
+    get_flow[line[0][0]] = line[0][1]
+    get_connections[line[0][0]] = line[1]
     print(line)
-print(flow)
-print(paths)
+
+
+def highest_pressure(valve,best,opened,total,minutes,get_flow,get_connections):
+    if minutes == 0:
+        return total
+    actions = ["MOVE","OPEN"]
+    flow = get_flow[valve]
+    children = get_connections[valve]
+    cur_opened = opened.clone()
+    if flow == 0 or valve in opened:
+        actions = ["MOVE"]
+    for open_valve in opened:
+        open_flow = get_flow[open_valve]
+        total += open_flow*minutes
+    
+    for child_valve in children:
+        for action in actions:
+            if action == "MOVE":
+                child_total = highest_pressure(child_valve,best,opened,total,minutes-1,get_flow,get_connections)
+            elif action == "OPEN":
+                child_total = highest_pressure(valve,best,opened,total,minutes-1,get_flow,get_connections)
+            if child_total > best:
+                return child_total
 
 
 
-def heur(flowrate,time):
-    return flowrate*time
 
-#def calc_pressure(scenario):
+# def heur(flowrate,time):
+#     return flowrate*time
+
+# #def calc_pressure(scenario):
 
 
 
-move_cost = 1
-open_cost = 1
-steps = {}
-minutes = range(1,30+1)
-scenarios = [[["AA","MOVE"],[]]]
-log = True
-actions = ["MOVE","OPEN"]
-break_at = 2
-counter = 0 
-for minute in minutes:
-    new_scenarios = []
-    if log:
-        print(f"== Minute {minute} ==")
-    for i in range(len(scenarios)):
-        scenario = scenarios[i][0]
-        opened = scenarios[i][1]
-        #print(scenario)
-        #current_valve = scenario[-2]
-        current_action = scenario[-1]
-        #options = paths[current_valve]
-        if current_action == "MOVE":
-            current_valve = scenario[-2]
-            options = paths[current_valve]
-            for option in options:
-                for action in actions:
-                    alt_scenario = scenario.copy()
-                    alt_opened = opened.copy()
-                    if action == "OPEN" and option in opened:
-                        break
-                    elif action == "OPEN" and option not in opened:
-                        alt_opened.append(option)
-                    alt_scenario.append(option)
-                    alt_scenario.append(action)
-                    #print("Alt: ",alt_scenario)
-                    new_scenarios.append([alt_scenario,alt_opened])
-        elif current_action == "OPEN":
-            current_valve = scenario[-2]
-            alt_scenario = scenario.copy()
-            alt_scenario.append(current_valve)
-            alt_scenario.append("MOVE")
-            new_scenarios.append([alt_scenario,opened])
+# move_cost = 1
+# open_cost = 1
+# steps = {}
+# minutes = range(1,30+1)
+# scenarios = [[["AA","MOVE"],[]]]
+# log = True
+# actions = ["MOVE","OPEN"]
+# break_at = 2
+# counter = 0 
 
-    #for scenario in new_scenarios:
-        #print(scenario)
-        #scenario.append()
-        #print(scenario, current_valve, options)
-    scenarios = new_scenarios
 
-    #if counter > break_at:
-        #break
+# def find_path(cur_valve,opened_valves,current_best,all_flow,all_connections,cur_minutes,total_pressure):
+#     cur_flow = all_flow[cur_valve]
+#     cur_connections = all_connections[cur_valve]
+#     actions = ["MOVE","OPEN"]
+#     pressure = total_pressure
+#     opened = opened_valves.clone()
+#     if cur_flow == 0:
+#         actions = ["MOVE"]
+#     if cur_valve in opened_valves:
+#         actions = ["MOVE"]
+#     # Calc current score 
+#     for valve in opened_valves:
+#         flow = all_flow[valve]
+#         pressure += flow*cur_minutes
+    
+#     for valv in cur_connections:
+#         value = find_path(valv,opened_valves)
+#         #connections = all_connections[valv]
+#         #for connection in connections:
+#         #    value = find_path()
+#     if cur_minutes == 0:
+#         return pressure
 
-    counter += 1
-    if log:
-        print()
-
-print(len(scenarios))
+# find_path("AA",[],0,flow_rates,paths,2,0)
