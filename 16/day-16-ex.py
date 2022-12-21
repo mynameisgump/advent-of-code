@@ -15,9 +15,11 @@ for line in lines:
 non_zero = {k:v for k,v in get_flow.items() if v != 0}
 total_valves = len(non_zero.keys())
 
-def highest_pressure(valve,best,opened,total,minutes,total_valves,get_flow,get_connections):
+def highest_pressure(valve,best,opened,total,minutes,total_valves,cur_path,get_flow,get_connections):
+    cur_path.append(valve)
     if minutes <= 0:
         return total
+
     if len(opened) == total_valves:
         while minutes > 0:
             for open_valve in opened:
@@ -38,17 +40,20 @@ def highest_pressure(valve,best,opened,total,minutes,total_valves,get_flow,get_c
     # print("Starting Child Loop:")
     for child_valve in children:
         for action in actions:
-            if action == "MOVE":
-                child_total = highest_pressure(child_valve,best,opened,total,minutes-1,total_valves,get_flow,get_connections)
-            elif action == "OPEN":
-                if valve not in opened:
-                    opened.append(valve)
-                child_total = highest_pressure(valve,best,opened,total,minutes-1,total_valves,get_flow,get_connections)
-            if child_total > best:
-                best = child_total
+            child_flow = get_flow[child_valve]
+            if child_flow > 0:
+                child_total = 0
+                if action == "MOVE":
+                    child_total = highest_pressure(child_valve,best,opened.copy(),total,minutes-1,total_valves,cur_path.copy(),get_flow,get_connections)
+                elif action == "OPEN":
+                    if valve not in opened:
+                        opened.append(valve)
+                        child_total = highest_pressure(valve,best,opened.copy(),total,minutes-1,total_valves,cur_path.copy(),get_flow,get_connections)
+                if child_total > best:
+                    best = child_total
     return best
 #best = 0 
-best = highest_pressure("AA",0,[],0,30,total_valves,get_flow,get_connections)
+best = highest_pressure("AA",0,[],0,30,total_valves,[],get_flow,get_connections)
 print(best)
 
 # def heur(flowrate,time):
