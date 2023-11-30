@@ -19,6 +19,18 @@ fn main() {
         .collect::<Vec<i32>>();
 
     // Sum the ints
-    let sum = input_ints.iter().fold(0, |acc, x| acc + x);
-    println!("{}", sum);
+    let mut sum = 0;
+    let mut seen = Vec::new();
+    let mut break_out = false;
+    while !break_out {
+        for freq in input_ints.iter() {
+            if seen.contains(&sum) {
+                println!("{} has been seen before", sum);
+                break_out = true;
+                break;
+            }
+            seen.push(sum);
+            sum += freq;
+        }
+    }
 }
