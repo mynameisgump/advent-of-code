@@ -1,8 +1,9 @@
+use std::collections::HashSet;
 use std::fs;
 
 fn main() {
     let input_string = fs::read_to_string("input").expect("Should have been able to read the file");
-
+    println!("Read input file");
     // split string into a list of strings by newline
     let trimmed_input_strings = input_string.split("\n").collect::<Vec<&str>>();
 
@@ -20,8 +21,9 @@ fn main() {
 
     // Sum the ints
     let mut sum = 0;
-    let mut seen = Vec::new();
+    let mut seen = HashSet::new();
     let mut break_out = false;
+
     while !break_out {
         for freq in input_ints.iter() {
             if seen.contains(&sum) {
@@ -29,7 +31,7 @@ fn main() {
                 break_out = true;
                 break;
             }
-            seen.push(sum);
+            seen.insert(sum);
             sum += freq;
         }
     }
