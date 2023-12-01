@@ -200,9 +200,50 @@ def gpt4_0_p2_solution():
                     total_sum += calibration_value
 
         return total_sum
-    print(sum_calibration_values_part_two("input.txt"))
+    print(sum_calibration_values_part_two("example2.txt"))
+
+# Bonus Prompt:
+# This solution does not work in some cases. For example, if one of the inputs was "eighthree", 
+# he correct calibration value is 83. This solution with replace the "three" with 3, resulting 
+# in "eigh3", meaning that it will not correctly add 8 to the beginning of the string. Please fix this
+def gpt4_0_p2_solution_bonus():
+    def sum_calibration_values_part_two_fixed(file_path):
+        """
+        Sums the calibration values from the provided file for Part Two of the problem.
+        Each calibration value is determined by finding the real first and last digit (or spelled out digit) 
+        of each line and combining them into a two-digit number.
+        """
+        # Mapping of spelled out digits to their numeric values
+        digit_mapping = {
+            'one': '1', 'two': '2', 'three': '3', 'four': '4', 
+            'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'
+        }
+
+        total_sum = 0
+
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Process each line to replace spelled out digits with numeric digits
+                for word in line.split():
+                    if word in digit_mapping:
+                        line = line.replace(word, digit_mapping[word], 1)
+                        
+                # Extract digits from the line
+                digits = [char for char in line if char.isdigit()]
+
+                if digits:
+                    # Combine the first and last digit to form a two-digit number
+                    calibration_value = int(digits[0] + digits[-1])
+                    total_sum += calibration_value
+
+        return total_sum
+
+    # Example usage
+    # Assuming the file path is 'calibration_document_part_two_fixed.txt'
+    print(sum_calibration_values_part_two_fixed('input.txt')) 
 
 #gpt3_5_p1_solution()
 #gpt4_0_p1_solution()
 #gpt3_5_p2_solution()
 #gpt4_0_p2_solution()
+gpt4_0_p2_solution_bonus()
