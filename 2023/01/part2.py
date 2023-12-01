@@ -44,9 +44,13 @@ def words_to_num(string):
     filtered = list(filter(negative_index_filter, sorted_positions))
     #print(filtered)
     for letter_pair in filtered:
+        # Attempt 1: Doesn't Work
         string = string.replace(letter_pair[0], conversion_table[letter_pair[0]])
+
+        # Attempt 2: Doesn't Work
+        word_index = string.find(letter_pair[0])
+        string = string[:word_index]+conversion_table[letter_pair[0]]+string[word_index:]
     return string
-    #return string
 
 def remove_letters(string):
     return re.sub("[^0-9]", "", string);
