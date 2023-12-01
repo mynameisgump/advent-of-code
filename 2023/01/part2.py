@@ -42,14 +42,20 @@ def words_to_num(string):
     #print(positions);
     sorted_positions = sorted(positions.items(), key=operator.itemgetter(1))
     filtered = list(filter(negative_index_filter, sorted_positions))
-    #print(filtered)
+    print()
+    print(string)
+    print(filtered)
     for letter_pair in filtered:
         # Attempt 1: Doesn't Work
-        string = string.replace(letter_pair[0], conversion_table[letter_pair[0]])
+        #string = string.replace(letter_pair[0], conversion_table[letter_pair[0]])
 
         # Attempt 2: Doesn't Work
-        word_index = string.find(letter_pair[0])
-        string = string[:word_index]+conversion_table[letter_pair[0]]+string[word_index:]
+        #word_index = string.find(letter_pair[0])
+        #string = string[:word_index]+conversion_table[letter_pair[0]]+string[word_index:]
+        
+        # attempt 3: Maybe baby:
+        string = string.replace(letter_pair[0], conversion_table[letter_pair[0]]+letter_pair[0])
+
     return string
 
 def remove_letters(string):
@@ -63,9 +69,10 @@ if __name__ == "__main__":
     filename="input.txt"
     with open(filename) as f:
         input_strings = f.read().replace("\n", " ").split(" ");
-        #print(input_strings)
+        print(input_strings)
         converted_strings = [words_to_num(item) for item in input_strings]
-        #print(converted_strings)
+        print()
+        print(converted_strings)
         digits_list = [remove_letters(item) for item in converted_strings if item != ""]
         calibration_values = [int(calc_calibration(item)) for item in digits_list]
         print(sum(calibration_values))
