@@ -168,7 +168,7 @@ def part1fixed(filename):
             intersections = [i for i in all_symbol_pos if i in positions]
             if len(intersections) > 0:
                 summable_numbers.append(int(number))
-
+        print(summable_numbers);
         print("Sum :",sum(summable_numbers))
 
 
@@ -276,8 +276,9 @@ def testing(filename):
                     summable_numbers.append(int(number))
                     #print(number, positions)
                             #print(number,positions)
+            print(summable_numbers);
             print("Sum :",sum(summable_numbers))
-            
+
 if __name__ == "__main__":
     input_selection = args.input
     solution_selection = args.solution;
@@ -290,7 +291,8 @@ if __name__ == "__main__":
     match solution_selection:
         case "p1":
             #part1(filename)
-            testing("test1.txt")
+            #testing("test1.txt")
             part1fixed("input.txt")
+            #part1fixed("example1.txt")
         case "p2":
             part2(filename)
