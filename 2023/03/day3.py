@@ -281,40 +281,29 @@ def testing(filename):
 
 def testing_part2(filename):
     with open(filename) as f:
-        # Test case 1 and 2 are done 
         test_cases = f.read().split("\n\n");
         for case in test_cases:
             lines = case.split("\n");
-            # print("")
-            print("New Test Case: ", lines)
 
-            # field[row][column]
             field = []
             field_string = ""
-            # row_length = len(lines[0])
-            # col_length = len(lines);
 
             total_col = len(lines[0])
             total_rows = len(lines)
-            # print(total_col)
-            # print(total_rows)
+
             for line in lines:
                 field.append([*line])
                 field_string += line
-                #print(field_string)
 
             digit_w_pos = []
             cur_num = "";
             cur_pos = 0;
 
-            # Get all digits with pos
             num_col = 0;
             num_row = 0;
             for i in range(len(field_string)):
                 char = field_string[i]
-            # for char in field_string:
                 if char.isdigit():
-                    # print(char)
                     if cur_num == "":
                         num_row = math.floor(cur_pos/total_col);
                         num_col = cur_pos % total_col;
@@ -335,25 +324,18 @@ def testing_part2(filename):
                         cur_num = ""
                 
                 cur_pos += 1
-            # print(digit_w_pos)
 
             symbol_w_pos = []
             cur_num = "";
             cur_pos = 0;
 
-            # Get all digits with pos
             sym_col = 0;
             sym_row = 0;
             for char in field_string:
                 if char == "*":
-                    # print("CHARACTER:", char)
-                    # print("CUR POS: ", cur_pos)
-                    # Correct
                     sym_row = math.floor(cur_pos/total_col);
                     sym_col = cur_pos % total_col;
 
-                    # print("SYM ROW:", sym_row)
-                    # print("SYM COL:", sym_col)
                     sym_positions = []
                     for col in range(-1,2):
                         for row in range(-1,2):
@@ -366,9 +348,6 @@ def testing_part2(filename):
                     symbol_w_pos.append([char, sym_positions])
                 
                 cur_pos += 1
-
-            print(symbol_w_pos)
-
             total_sum = 0
             for symbol_pair in symbol_w_pos:
                 total_inter = []
@@ -381,28 +360,7 @@ def testing_part2(filename):
                 if len(total_inter) > 1:
                     gear_sum = int(total_inter[0])*int(total_inter[1])
                     total_sum += gear_sum
-                print(total_inter)
             print(total_sum)
-                
-            # print(symbol_w_pos)
-            # all_symbol_pos = []
-            # for pair in symbol_w_pos:
-            #     all_symbol_pos.append(pair[1])
-            # all_symbol_pos = sum(all_symbol_pos,[])
-            #print(all_symbol_pos)
-
-            # summable_numbers = []
-            # for number_pair in digit_w_pos:
-            #     number = number_pair[0]
-            #     positions = number_pair[1]
-            #     intersections = [i for i in all_symbol_pos if i in positions]
-                # print("Number+Inter", number, intersections, all_symbol_pos)
-                # if len(intersections) > 0:
-                #     summable_numbers.append(int(number))
-                    #print(number, positions)
-                            #print(number,positions)
-            # print(summable_numbers);
-            # print("Sum :",sum(summable_numbers))
 
 if __name__ == "__main__":
     input_selection = args.input
