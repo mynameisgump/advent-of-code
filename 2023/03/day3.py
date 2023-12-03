@@ -69,16 +69,24 @@ def part1(filename):
                 symbol_w_pos.append([char, sym_positions])
             
             cur_pos += 1
-        print(symbol_w_pos)
+        #print(symbol_w_pos)
         all_symbol_pos = []
         for pair in symbol_w_pos:
             all_symbol_pos.append(pair[1])
         all_symbol_pos = sum(all_symbol_pos,[])
-        print(all_symbol_pos)
+        #print(all_symbol_pos)
 
+        print()
+        summable_numbers = []
         for number_pair in digit_w_pos:
-            
-
+            number = number_pair[0]
+            positions = number_pair[1]
+            intersections = [i for i in positions if i in all_symbol_pos]
+            #print(len(intersections))
+            if len(intersections) > 0:
+                summable_numbers.append(int(number))
+            #print(number,positions)
+        print(sum(summable_numbers))
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
