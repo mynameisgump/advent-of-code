@@ -74,8 +74,8 @@ def calc_seed_range_value(seed_range,dest,source,length):
         
             mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
             # left and right
-            unmapped_seed_ranges.append(range(seed_range.start,source_range.start))
-            unmapped_seed_ranges.append(range(source_range.stop,seed_range.stop))
+            unmapped_seed_ranges.append(range(seed_range.start,source_range.start-1))
+            unmapped_seed_ranges.append(range(source_range.stop+1,seed_range.stop))
             
         if overlap_type == "upper_inter":
             inter_start = source_range.start
@@ -83,7 +83,7 @@ def calc_seed_range_value(seed_range,dest,source,length):
             final_inter_start_dest = map_point(inter_start,source,dest)
             final_inter_stop_dest = map_point(inter_stop,source,dest)
             mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
-            unmapped_seed_ranges.append(range(seed_range.start,source_range.start))
+            unmapped_seed_ranges.append(range(seed_range.start,source_range.start-1))
         
         if overlap_type == "lower_inter":
             inter_start = seed_range.start
@@ -99,7 +99,22 @@ def calc_seed_range_value(seed_range,dest,source,length):
     return [mapped_seed_ranges,unmapped_seed_ranges]
 
 
-    
+# def maximize_nonoverlapping_count(intervals):
+#     # sort by the end-point
+#     L = sorted(intervals, key=lambda (start, end): (end, (end - start)),
+#                reverse=True) # O(n*logn)
+#     iv = build_interval_tree(intervals) # O(n*log n)
+#     result = []
+#     while L: # until there are intervals left to consider
+#         # pop the interval with the smallest end-point, keep it in the result
+#         result.append(L.pop()) # O(1)
+#         # remove intervals that overlap with the popped interval
+#         overlapping_intervals = iv.pop(result[-1]) # O(log n + m)
+#         remove(overlapping_intervals, from_=L) 
+#     return result
+
+
+
 
 def chunks(lst, n):
     for i in range(0, len(lst), n):
@@ -147,7 +162,7 @@ def part2(filename):
         chunked_seeds = list(chunks(seeds,2))
         seed_ranges = []
         for seed_pair in chunked_seeds:
-            seed_range = range(seed_pair[0],seed_pair[0]+seed_pair[1])
+            seed_range = range(seed_pair[0],seed_pair[0]+seed_pair[1]-1)
             seed_ranges.append(seed_range);
         
         map_strings = [line.split("\n") for line in lines[1:]]
@@ -179,7 +194,10 @@ def part2(filename):
                         seed_queue.extend(calculated_seed_ranges[1])
                 if split == False:
                     new_seed_ranges.append(seed_range)
+
             seed_ranges = new_seed_ranges
+            
+
             print("New seed Queue:", new_seed_ranges)
             # for seed_range in seed_ranges:
             #     final_seed_range = seed_range
@@ -204,7 +222,7 @@ if __name__ == "__main__":
         case "i1":
             filename="input.txt"
         case "ex1":
-            filename="testCase.txt"
+            filename="example1.txt"
     match solution_selection:
         case "p1":
             part1(filename)
