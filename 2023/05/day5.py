@@ -45,9 +45,6 @@ def map_point(value,starting_point,destination):
 def calc_seed_range_value(seed_range,dest,source,length):
     print()
     print("Calcing range value: ", seed_range,dest,source,length)
-    seed_range_lower = seed_range[0]
-    seed_range_upper = seed_range[1]
-    seed_range = range(seed_range[0],seed_range[1])
     
     
     source_range_lower = source
@@ -62,7 +59,6 @@ def calc_seed_range_value(seed_range,dest,source,length):
     if check_overlap(seed_range,source_range):
         overlap_type = get_overlap_type(seed_range,source_range)
         print("Overlap Type: ", overlap_type)
-        print("Ranges overlap")
         if overlap_type == "subset":
             intersection_start = seed_range.start
             intersection_stop = seed_range.stop
