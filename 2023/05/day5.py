@@ -59,12 +59,11 @@ def calc_seed_range_value(seed_range,dest,source,length):
         if overlap_type == "subset":
             intersection_start = seed_range.start
             intersection_stop = seed_range.stop
+
             final_start_dest = map_point(intersection_start,source,dest)
-
             final_stop_dest = map_point(intersection_stop,source,dest)
-
-            #print("Intersection: ",final_start_dest,final_stop_dest)
             final_range = range(final_start_dest,final_stop_dest)
+
             mapped_seed_ranges.append(final_range)
         if overlap_type == "superset":
             print("XXXXXXXXXXXXXXXXXXXX")
@@ -73,22 +72,28 @@ def calc_seed_range_value(seed_range,dest,source,length):
             final_inter_start_dest = map_point(inter_start,source,dest)
             final_inter_stop_dest = map_point(inter_stop,source,dest)
             
-            # left_unmap_start = seed_range.start
-            # left_unmap_stop = source_range.start
-            # final_left_start_dest = map_point(left_unmap_start,source,dest)
-            # final_left_stop_dest = map_point(left_unmap_stop,source,dest)
-
-            # right_unmap_start = source_range.stop
-            # right_unmap_stop = seed_range.stop
-            # final_right_start_dest = map_point(right_unmap_start,source,dest)
-            # final_right_stop_dest = map_point(right_unmap_stop,source,dest)
+        
             mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
             # left and right
-            unmapped_seed_ranges.append(range(seed_range))
-            # unmapped_seed_ranges.append(range(final_left_start_dest,final_left_stop_dest))
-            # unmapped_seed_ranges.append(range(final_right_start_dest,final_right_stop_dest))
-        #final_range = range(dest+(intersection_start-source_range_lower),dest+(intersection_stop-source_range_lower))
-        #mapped_seed_ranges.append(final_range)
+            unmapped_seed_ranges.append(range(seed_range.start,source_range.start))
+            unmapped_seed_ranges.append(range(source_range.stop,seed_range.stop))
+            
+        if overlap_type == "upper_inter":
+            inter_start = source_range.start
+            inter_stop = seed_range.stop
+            final_inter_start_dest = map_point(inter_start,source,dest)
+            final_inter_stop_dest = map_point(inter_stop,source,dest)
+            mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
+            unmapped_seed_ranges.append(range(seed_range.start,source_range.start))
+        
+        if overlap_type == "lower_inter":
+            inter_start = seed_range.start
+            inter_stop = source_range.stop
+            final_inter_start_dest = map_point(inter_start,source,dest)
+            final_inter_stop_dest = map_point(inter_stop,source,dest)
+            mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
+            unmapped_seed_ranges.append(range(seed_range.start,source_range.start))
+
     else:
         return None
     
@@ -175,7 +180,7 @@ def part2(filename):
                         seed_queue.extend(calculated_seed_ranges[1])
                 if split == False:
                     new_seed_ranges.append(seed_range)
-                
+            seed_ranges = new_seed_ranges
             print("New seed Queue:", new_seed_ranges)
             # for seed_range in seed_ranges:
             #     final_seed_range = seed_range
@@ -200,7 +205,7 @@ if __name__ == "__main__":
         case "i1":
             filename="input.txt"
         case "ex1":
-            filename="testCase.txt"
+            filename="example1.txt"
     match solution_selection:
         case "p1":
             part1(filename)
