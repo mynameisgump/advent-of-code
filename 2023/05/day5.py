@@ -48,7 +48,7 @@ def calc_seed_range_value(seed_range,dest,source,length):
     source_range_upper = source+length
     source_range = range(source_range_lower,source_range_upper)
 
-    print("Calcing overlaps and values for:", source_range, seed_range)
+    print("Calcing overlaps and values for:", seed_range, source_range)
     unmapped_seed_ranges = []
     mapped_seed_ranges = []
 
@@ -66,7 +66,6 @@ def calc_seed_range_value(seed_range,dest,source,length):
 
             mapped_seed_ranges.append(final_range)
         if overlap_type == "superset":
-            print("XXXXXXXXXXXXXXXXXXXX")
             inter_start = source_range.start
             inter_stop = source_range.stop
             final_inter_start_dest = map_point(inter_start,source,dest)
@@ -92,11 +91,11 @@ def calc_seed_range_value(seed_range,dest,source,length):
             final_inter_start_dest = map_point(inter_start,source,dest)
             final_inter_stop_dest = map_point(inter_stop,source,dest)
             mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
-            unmapped_seed_ranges.append(range(seed_range.start,source_range.start))
+            unmapped_seed_ranges.append(range(source_range.stop+1,seed_range.stop))
 
     else:
         return None
-    
+    print("Results:", mapped_seed_ranges,unmapped_seed_ranges)
     return [mapped_seed_ranges,unmapped_seed_ranges]
 
 
@@ -155,7 +154,7 @@ def part2(filename):
         for plant_map in map_strings:
             print()
             print("||||||||||||||||||||||||||||||||")
-            print("New Map")
+            print("New Map:")
             number_strings = plant_map[1:]
 
             mapping_values = []
@@ -205,7 +204,7 @@ if __name__ == "__main__":
         case "i1":
             filename="input.txt"
         case "ex1":
-            filename="example1.txt"
+            filename="testCase.txt"
     match solution_selection:
         case "p1":
             part1(filename)
