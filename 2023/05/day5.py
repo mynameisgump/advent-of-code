@@ -103,9 +103,8 @@ def calc_seed_range_value(seed_range,dest,source,length):
 
         #final_range = range(dest+(intersection_start-source_range_lower),dest+(intersection_stop-source_range_lower))
         #mapped_seed_ranges.append(final_range)
-
     else:
-        unmapped_seed_ranges = seed_range
+        return None
     
     return [mapped_seed_ranges,unmapped_seed_ranges]
 
@@ -154,20 +153,20 @@ def part1(filename):
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n\n");
-        print("All Lines: ",lines)
         seeds = [int(num) for num in list(filter(None, lines[:1][0].split(":")[1].split(" ")))]
         chunked_seeds = list(chunks(seeds,2))
         seed_ranges = []
         for seed_pair in chunked_seeds:
-            seed_range = [seed_pair[0],seed_pair[0]+seed_pair[1]]
-            print(seed_range)
+            seed_range = range(seed_pair[0],seed_pair[0]+seed_pair[1])
             seed_ranges.append(seed_range);
         
-        print(seed_ranges)
         map_strings = [line.split("\n") for line in lines[1:]]
         for plant_map in map_strings:
+            print()
+            print("||||||||||||||||||||||||||||||||")
+            print("New Map")
             number_strings = plant_map[1:]
-            #print("Maps strings: ",number_strings)
+
             mapping_values = []
             for number_string in number_strings:
                 numbers = [int(num) for num in number_string.split(" ")]
@@ -176,19 +175,33 @@ def part2(filename):
                 mapping_values.append([dest,source,length])
             
             new_seed_ranges = []
-            unmapped_seed_ranges = []
-            mapped_seed_ranges = []
-            for seed_range in seed_ranges:
-                final_seed_range = seed_range
-                cur_seed_range = seed_range
+            seed_queue = seed_ranges.copy()
+            while len(seed_queue) > 0:
+                seed_range = seed_queue.pop(0)
+                split = False
                 for mapping_value in mapping_values:
-                    # This function will return mapped seeds on the left and unmapped seeds on the right 
-
-                    calculated_val = calc_seed_range_value(seed_range,mapping_value[0],mapping_value[1],mapping_value[2])
-                    if len(calculated_val[0]) > 0:
-                        mapped_seed_ranges.append(calculated_val[0])
+                    calculated_seed_ranges = calc_seed_range_value(seed_range,mapping_value[0],mapping_value[1],mapping_value[2])
+                    if calculated_seed_ranges:
+                        split = True
+                        new_seed_ranges.extend(calculated_seed_ranges[0])
+                        seed_queue.extend(calculated_seed_ranges[1])
+                if split == False:
+                    new_seed_ranges.append(seed_range)
+                
+            print("New seed Queue:", new_seed_ranges)
+            # for seed_range in seed_ranges:
+            #     final_seed_range = seed_range
+            #     cur_seed_range = seed_range
+            #     for mapping_value in mapping_values:
+            #         calculated_val = calc_seed_range_value(seed_range,mapping_value[0],mapping_value[1],mapping_value[2])
+            #         if calculated_val:
+            #             print("Stuff was done")
+            #             mapped_seed_ranges.extend(calculated_val[0])
+            #             unmapped_seed_ranges.extend(calculated_val[1])
                     
-                    print("Calculated return:", calculated_val)
+                        
+                    
+            #         print("Calculated return:", calculated_val)
 
        
 if __name__ == "__main__":
