@@ -26,7 +26,22 @@ def calc_seed_value(seed_num,dest,source,length):
     
 def check_overlap(range1, range2):
     return range1.start < range2.stop and range2.start < range1.stop
+
+def get_overlap_type(range1,range2):
+    if range1.start > range2.start and range1.stop < range2.stop:
+        return "subset"
+    elif range1.start < range2.start and range1.stop > range2.stop:
+        return "superset"
+    elif range1.start < range2.start and range1.stop < range2.stop:
+        return "upper_inter"
+    elif range1.start > range2.start and range1.stop > range2.stop:
+        return "lower_inter"
 # Left return will be mapped seeds and right return will be unmapped seeds
+
+def map_point(value,starting_point,destination):
+    stop_dist_from_source = value - starting_point
+    return(destination+stop_dist_from_source)
+
 def calc_seed_range_value(seed_range,dest,source,length):
     print()
     print("Calcing range value: ", seed_range,dest,source,length)
@@ -45,35 +60,55 @@ def calc_seed_range_value(seed_range,dest,source,length):
     print("Seed Range: ", seed_range);
     print("Source Range: ", source_range);
     if check_overlap(seed_range,source_range):
+        overlap_type = get_overlap_type(seed_range,source_range)
+        print("Overlap Type: ", overlap_type)
         print("Ranges overlap")
-        intersection_start = max(seed_range.start, source_range.start)
-        intersection_stop = min(seed_range.stop, source_range.stop)
-        
-        # only works if subset of section 
-        
-        final_range = range(dest+(intersection_start-source_range_lower),dest+(intersection_stop-source_range_lower))
-        mapped_seed_ranges.append(final_range)
-    
-        # if source_range.start > start:
-        #     start = source_range.start
+        if overlap_type == "subset":
+            intersection_start = seed_range.start
+            intersection_stop = seed_range.stop
+            #intersection_start = max(seed_range.start, source_range.start)
+            #intersection_stop = min(seed_range.stop, source_range.stop)
 
-        # Calculate the difference for the stop
-        # if source_range.stop < stop:
-        #     stop = source_range.stop
+            #start_dist_from_source = intersection_start - source
+            #final_start_dest = dest+start_dist_from_source
+            final_start_dest = map_point(intersection_start,source,dest)
 
-        # if start < stop:
-        #     return range(start, stop) 
-        #difference_stop = 
-        #print(range(start,stop))
+            # stop_dist_from_source = intersection_stop - source
+            # final_stop_dest = dest+stop_dist_from_source
+            final_stop_dest = map_point(intersection_stop,source,dest)
 
+            print("Intersection: ",final_start_dest,final_stop_dest)
+            # only works if subset of section 
+            final_range = range(final_start_dest,final_stop_dest)
+            mapped_seed_ranges.append(final_range)
+        if overlap_type == "superset":
+            inter_start = source_range.start
+            inter_stop = source_range.stop
+            final_inter_start_dest = map_point(inter_start,source,dest)
+            final_inter_stop_dest = map_point(inter_start,source,dest)
+            
+            left_unmap_start = seed_range.start
+            left_unmap_stop = source_range.start
+            final_left_start_dest = map_point(left_unmap_start,source,dest)
+            final_left_stop_dest = map_point(left_unmap_stop,source,dest)
+
+            right_unmap_start = source_range.stop
+            right_unmap_stop = seed_range.stop
+            final_right_start_dest = map_point(right_unmap_start,source,dest)
+            final_right_stop_dest = map_point(right_unmap_stop,source,dest)
+            mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
+
+            unmapped_seed_ranges.append(range(final_left_start_dest,final_left_stop_dest))
+            unmapped_seed_ranges.append(range(final_right_start_dest,final_right_stop_dest))
+
+        #final_range = range(dest+(intersection_start-source_range_lower),dest+(intersection_stop-source_range_lower))
+        #mapped_seed_ranges.append(final_range)
 
     else:
         unmapped_seed_ranges = seed_range
-        return [mapped_seed_ranges,unmapped_seed_ranges]
-    # if seed_range_lower >= source_range_lower and seed_range_upper < source_range_upper:
-
-    #     print("seed in incapsulated in the mapping range")
     
+    return [mapped_seed_ranges,unmapped_seed_ranges]
+
 
     
 
@@ -139,24 +174,22 @@ def part2(filename):
                 [dest,source,length] = [int(num) for num in number_string.split(" ")]
                 source_upper_bound = source+length
                 mapping_values.append([dest,source,length])
+            
             new_seed_ranges = []
+            unmapped_seed_ranges = []
+            mapped_seed_ranges = []
             for seed_range in seed_ranges:
                 final_seed_range = seed_range
                 cur_seed_range = seed_range
                 for mapping_value in mapping_values:
+                    # This function will return mapped seeds on the left and unmapped seeds on the right 
+
                     calculated_val = calc_seed_range_value(seed_range,mapping_value[0],mapping_value[1],mapping_value[2])
-            #print(mapping_values)
-            # new_seeds = []
-            # for seed_num in seeds:
-            #     final_seed_val = seed_num
-            #     for mapping_value in mapping_values:
-            #         calculated_val = calc_seed_value(seed_num,mapping_value[0],mapping_value[1],mapping_value[2])
-            #         if calculated_val:
-            #             final_seed_val = calculated_val
-            #     print("Seed final value: ", final_seed_val)
-            #     new_seeds.append(final_seed_val)
-            # seeds = new_seeds
-        # print("Final seed: ", min(seeds))
+                    if len(calculated_val[0]) > 0:
+                        mapped_seed_ranges.append(calculated_val[0])
+                    
+                    print("Calculated return:", calculated_val)
+
        
 if __name__ == "__main__":
     input_selection = args.input
