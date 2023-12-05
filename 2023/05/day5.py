@@ -43,60 +43,50 @@ def map_point(value,starting_point,destination):
     return(destination+stop_dist_from_source)
 
 def calc_seed_range_value(seed_range,dest,source,length):
-    print()
-    print("Calcing range value: ", seed_range,dest,source,length)
-    
-    
+
     source_range_lower = source
     source_range_upper = source+length
     source_range = range(source_range_lower,source_range_upper)
 
+    print("Calcing overlaps and values for:", source_range, seed_range)
     unmapped_seed_ranges = []
     mapped_seed_ranges = []
 
-    print("Seed Range: ", seed_range);
-    print("Source Range: ", source_range);
+
     if check_overlap(seed_range,source_range):
         overlap_type = get_overlap_type(seed_range,source_range)
-        print("Overlap Type: ", overlap_type)
+        print("Overlapping, type:", overlap_type)
         if overlap_type == "subset":
             intersection_start = seed_range.start
             intersection_stop = seed_range.stop
-            #intersection_start = max(seed_range.start, source_range.start)
-            #intersection_stop = min(seed_range.stop, source_range.stop)
-
-            #start_dist_from_source = intersection_start - source
-            #final_start_dest = dest+start_dist_from_source
             final_start_dest = map_point(intersection_start,source,dest)
 
-            # stop_dist_from_source = intersection_stop - source
-            # final_stop_dest = dest+stop_dist_from_source
             final_stop_dest = map_point(intersection_stop,source,dest)
 
-            print("Intersection: ",final_start_dest,final_stop_dest)
-            # only works if subset of section 
+            #print("Intersection: ",final_start_dest,final_stop_dest)
             final_range = range(final_start_dest,final_stop_dest)
             mapped_seed_ranges.append(final_range)
         if overlap_type == "superset":
+            print("XXXXXXXXXXXXXXXXXXXX")
             inter_start = source_range.start
             inter_stop = source_range.stop
             final_inter_start_dest = map_point(inter_start,source,dest)
-            final_inter_stop_dest = map_point(inter_start,source,dest)
+            final_inter_stop_dest = map_point(inter_stop,source,dest)
             
-            left_unmap_start = seed_range.start
-            left_unmap_stop = source_range.start
-            final_left_start_dest = map_point(left_unmap_start,source,dest)
-            final_left_stop_dest = map_point(left_unmap_stop,source,dest)
+            # left_unmap_start = seed_range.start
+            # left_unmap_stop = source_range.start
+            # final_left_start_dest = map_point(left_unmap_start,source,dest)
+            # final_left_stop_dest = map_point(left_unmap_stop,source,dest)
 
-            right_unmap_start = source_range.stop
-            right_unmap_stop = seed_range.stop
-            final_right_start_dest = map_point(right_unmap_start,source,dest)
-            final_right_stop_dest = map_point(right_unmap_stop,source,dest)
+            # right_unmap_start = source_range.stop
+            # right_unmap_stop = seed_range.stop
+            # final_right_start_dest = map_point(right_unmap_start,source,dest)
+            # final_right_stop_dest = map_point(right_unmap_stop,source,dest)
             mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
-
-            unmapped_seed_ranges.append(range(final_left_start_dest,final_left_stop_dest))
-            unmapped_seed_ranges.append(range(final_right_start_dest,final_right_stop_dest))
-
+            # left and right
+            unmapped_seed_ranges.append(range(seed_range))
+            # unmapped_seed_ranges.append(range(final_left_start_dest,final_left_stop_dest))
+            # unmapped_seed_ranges.append(range(final_right_start_dest,final_right_stop_dest))
         #final_range = range(dest+(intersection_start-source_range_lower),dest+(intersection_stop-source_range_lower))
         #mapped_seed_ranges.append(final_range)
     else:
@@ -174,11 +164,13 @@ def part2(filename):
             seed_queue = seed_ranges.copy()
             while len(seed_queue) > 0:
                 seed_range = seed_queue.pop(0)
+                print("Popped_seed:", seed_range)
                 split = False
                 for mapping_value in mapping_values:
                     calculated_seed_ranges = calc_seed_range_value(seed_range,mapping_value[0],mapping_value[1],mapping_value[2])
                     if calculated_seed_ranges:
                         split = True
+                        print(calculated_seed_ranges[1])
                         new_seed_ranges.extend(calculated_seed_ranges[0])
                         seed_queue.extend(calculated_seed_ranges[1])
                 if split == False:
@@ -208,7 +200,7 @@ if __name__ == "__main__":
         case "i1":
             filename="input.txt"
         case "ex1":
-            filename="example1.txt"
+            filename="testCase.txt"
     match solution_selection:
         case "p1":
             part1(filename)
