@@ -52,7 +52,6 @@ def calc_seed_range_value(seed_range,dest,source,length):
     unmapped_seed_ranges = []
     mapped_seed_ranges = []
 
-
     if check_overlap(seed_range,source_range):
         overlap_type = get_overlap_type(seed_range,source_range)
         print("Overlapping, type:", overlap_type)
@@ -162,8 +161,10 @@ def part2(filename):
         chunked_seeds = list(chunks(seeds,2))
         seed_ranges = []
         for seed_pair in chunked_seeds:
-            seed_range = range(seed_pair[0],seed_pair[0]+seed_pair[1]-1)
+            seed_range = (seed_pair[0],seed_pair[0]+seed_pair[1])
             seed_ranges.append(seed_range);
+    
+        print("Total_seeds:", seed_ranges)
         
         map_strings = [line.split("\n") for line in lines[1:]]
         for plant_map in map_strings:
@@ -197,7 +198,7 @@ def part2(filename):
 
             seed_ranges = new_seed_ranges
             
-
+            
             print("New seed Queue:", new_seed_ranges)
             # for seed_range in seed_ranges:
             #     final_seed_range = seed_range
