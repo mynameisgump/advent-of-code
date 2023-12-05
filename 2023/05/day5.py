@@ -15,6 +15,26 @@ maps = []
 # The create this for each line:
 # [source_lower,source_upper,length,dest]
 
+def remove_overlap(ranges):
+    result = []
+    current_start = -1
+    current_stop = -1 
+
+    for start, stop in sorted(ranges):
+        if start > current_stop:
+            # this segment starts after the last segment stops
+            # just add a new segment
+            result.append( (start, stop) )
+            current_start, current_stop = start, stop
+        else:
+            # segments overlap, replace
+            result[-1] = (current_start, stop)
+            # current_start already guaranteed to be lower
+            current_stop = max(current_stop, stop)
+
+    return result
+
+
 def calc_seed_value(seed_num,dest,source,length):
     source_upper_bound = source+length;
     if source <= seed_num < source_upper_bound:
@@ -25,17 +45,27 @@ def calc_seed_value(seed_num,dest,source,length):
         return None
     
 def check_overlap(range1, range2):
-    return range1.start < range2.stop and range2.start < range1.stop
+    return range1[0] < range2[1] and range2[0] < range1[1]
+
+def overlap(start1, end1, start2, end2):
+    return (
+        start1 <= start2 <= end1 or
+        start1 <= end2 <= end1 or
+        start2 <= start1 <= end2 or
+        start2 <= end1 <= end2
+    )
 
 def get_overlap_type(range1,range2):
-    if range1.start > range2.start and range1.stop < range2.stop:
+    if range1[0] >= range2[0] and range1[1] <= range2[1]:
         return "subset"
-    elif range1.start < range2.start and range1.stop > range2.stop:
+    elif range1[0] < range2[0] and range1[1] > range2[1]:
         return "superset"
-    elif range1.start < range2.start and range1.stop < range2.stop:
+    elif range1[0] < range2[0] and range1[1] <= range2[1] and range1[1] > range2[0]:
         return "upper_inter"
-    elif range1.start > range2.start and range1.stop > range2.stop:
+    elif range1[0] >= range2[0] and range1[0] < range2[1] and range1[1] > range2[1]:
         return "lower_inter"
+    else:
+        return None
 # Left return will be mapped seeds and right return will be unmapped seeds
 
 def map_point(value,starting_point,destination):
@@ -46,51 +76,57 @@ def calc_seed_range_value(seed_range,dest,source,length):
 
     source_range_lower = source
     source_range_upper = source+length
-    source_range = range(source_range_lower,source_range_upper)
+    source_range = source_range_lower,source_range_upper
 
-    print("Calcing overlaps and values for:", seed_range, source_range)
+    #print("Calcing overlaps and values for:", seed_range, source_range)
     unmapped_seed_ranges = []
     mapped_seed_ranges = []
+    print()
+    print("New comparison:")
+    print("Seed Range:", seed_range)
+    print("Source Range:", source_range)
 
-    if check_overlap(seed_range,source_range):
+    if get_overlap_type(seed_range,source_range):
         overlap_type = get_overlap_type(seed_range,source_range)
         print("Overlapping, type:", overlap_type)
         if overlap_type == "subset":
-            intersection_start = seed_range.start
-            intersection_stop = seed_range.stop
+            intersection_start = seed_range[0]
+            intersection_stop = seed_range[1]
 
             final_start_dest = map_point(intersection_start,source,dest)
             final_stop_dest = map_point(intersection_stop,source,dest)
-            final_range = range(final_start_dest,final_stop_dest)
+            final_range = final_start_dest,final_stop_dest
 
-            mapped_seed_ranges.append(final_range)
+            mapped_seed_ranges.append((final_range))
         if overlap_type == "superset":
-            inter_start = source_range.start
-            inter_stop = source_range.stop
+            inter_start = source_range[0]
+            inter_stop = source_range[1]
             final_inter_start_dest = map_point(inter_start,source,dest)
             final_inter_stop_dest = map_point(inter_stop,source,dest)
             
         
-            mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
+            mapped_seed_ranges.append((final_inter_start_dest,final_inter_stop_dest))
             # left and right
-            unmapped_seed_ranges.append(range(seed_range.start,source_range.start-1))
-            unmapped_seed_ranges.append(range(source_range.stop+1,seed_range.stop))
+            unmapped_seed_ranges.append((seed_range[0],source_range[0]))
+            unmapped_seed_ranges.append((source_range[1],seed_range[1]))
             
         if overlap_type == "upper_inter":
-            inter_start = source_range.start
-            inter_stop = seed_range.stop
+            print("Source Range:", source_range)
+            print("Seed range:", seed_range)
+            inter_start = source_range[0]
+            inter_stop = seed_range[1]
             final_inter_start_dest = map_point(inter_start,source,dest)
             final_inter_stop_dest = map_point(inter_stop,source,dest)
-            mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
-            unmapped_seed_ranges.append(range(seed_range.start,source_range.start-1))
+            mapped_seed_ranges.append((final_inter_start_dest,final_inter_stop_dest))
+            unmapped_seed_ranges.append((seed_range[0],source_range[0]))
         
         if overlap_type == "lower_inter":
-            inter_start = seed_range.start
-            inter_stop = source_range.stop
+            inter_start = seed_range[0]
+            inter_stop = source_range[1]
             final_inter_start_dest = map_point(inter_start,source,dest)
             final_inter_stop_dest = map_point(inter_stop,source,dest)
-            mapped_seed_ranges.append(range(final_inter_start_dest,final_inter_stop_dest))
-            unmapped_seed_ranges.append(range(source_range.stop+1,seed_range.stop))
+            mapped_seed_ranges.append((final_inter_start_dest,final_inter_stop_dest))
+            unmapped_seed_ranges.append((source_range[1],seed_range[1]))
 
     else:
         return None
@@ -136,7 +172,7 @@ def part1(filename):
                 [dest,source,length] = [int(num) for num in number_string.split(" ")]
                 source_upper_bound = source+length
                 mapping_values.append([dest,source,length])
-            print(mapping_values)
+            #print(mapping_values)
             new_seeds = []
             for seed_num in seeds:
                 final_seed_val = seed_num
@@ -163,9 +199,7 @@ def part2(filename):
         for seed_pair in chunked_seeds:
             seed_range = (seed_pair[0],seed_pair[0]+seed_pair[1])
             seed_ranges.append(seed_range);
-    
-        print("Total_seeds:", seed_ranges)
-        
+            
         map_strings = [line.split("\n") for line in lines[1:]]
         for plant_map in map_strings:
             print()
@@ -179,7 +213,7 @@ def part2(filename):
                 [dest,source,length] = [int(num) for num in number_string.split(" ")]
                 source_upper_bound = source+length
                 mapping_values.append([dest,source,length])
-            
+            print("Mapping Values: ", mapping_values)
             new_seed_ranges = []
             seed_queue = seed_ranges.copy()
             while len(seed_queue) > 0:
@@ -194,12 +228,17 @@ def part2(filename):
                         new_seed_ranges.extend(calculated_seed_ranges[0])
                         seed_queue.extend(calculated_seed_ranges[1])
                 if split == False:
+                    #print("Seed Range:", seed_range)
                     new_seed_ranges.append(seed_range)
 
-            seed_ranges = new_seed_ranges
+            seed_ranges = remove_overlap(new_seed_ranges)
             
-            
+            # Test nums backup: seeds: 51 2 40 100 45 10 55 10
             print("New seed Queue:", new_seed_ranges)
+            total_seeds = 0
+            for seed in seed_ranges:
+                total_seeds += seed[1]-seed[0]
+            print("Total Seeds:", total_seeds)
             # for seed_range in seed_ranges:
             #     final_seed_range = seed_range
             #     cur_seed_range = seed_range
@@ -213,8 +252,8 @@ def part2(filename):
                         
                     
             #         print("Calculated return:", calculated_val)
-
-       
+        res = min(seed_ranges, key = lambda i : i[0])[0]
+        print("Result: ",res)
 if __name__ == "__main__":
     input_selection = args.input
     solution_selection = args.solution;
@@ -223,7 +262,7 @@ if __name__ == "__main__":
         case "i1":
             filename="input.txt"
         case "ex1":
-            filename="example1.txt"
+            filename="input.txt"
     match solution_selection:
         case "p1":
             part1(filename)
