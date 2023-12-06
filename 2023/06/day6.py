@@ -45,7 +45,30 @@ def part1(filename):
 
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        [time_string, distance_string] = f.read().split("\n")
+        times = list(filter(None, time_string.split(":")[1].split(" ")))
+        distances = list(filter(None, distance_string.split(":")[1].split(" ")))
+        
+        print(times, distances)
+        race_time = int("".join(times))
+        race_distance = int("".join(distances))
+        print(race_time,race_distance)
+        race_solutions = 0
+
+        boat_distances = []
+        for mils in range(race_time+1):
+            seconds_held = mils
+            time_at_speed = race_time-mils
+            boat_distances.append(seconds_held*time_at_speed)
+        
+
+        for distance in boat_distances:
+                if distance > race_distance:
+                    race_solutions += 1
+        print(race_solutions)
+        # print("Race Time: ", race_time)
+        # print("Race Distance: ",race_distance)
+        # print("Boat distances: ", boat_distances)
 
 if __name__ == "__main__":
     input_selection = args.input
