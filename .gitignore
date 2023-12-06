@@ -1,2 +1,4 @@
 2023/visualizations
 *.DS_STORE
+*input.txt
+*example*.txt
