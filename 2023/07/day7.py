@@ -97,72 +97,33 @@ def judge_hand_p2(hand):
     for card in hand:
         card_vals[card] = card_vals.get(card, 0) + 1
     
-    # Five Kind
-    # Four Kind 
-    # Full house
-    # Three Kind
-    # Two Pair
-    # One Pair 
-    # High Card
-    if "J" not in card_vals.keys():
+    
+
+    if "J" in card_vals.keys():
         if sorted(card_vals.values()) == [5]:
             return 6
-        if sorted(card_vals.values()) == [1,4]:
-            return 5
-        if sorted(card_vals.values()) == [2,3]:
-            return 4
-        if sorted(card_vals.values()) == [1,1,3]:
-            return 3
-        if sorted(card_vals.values()) == [1,2,2]:
-            return 2 
-        if sorted(card_vals.values()) == [1,1,1,2]:
-            return 1 
-        if sorted(card_vals.values()) == [1,1,1,1,1]:
-            return 0
-        print(card_vals)
-    else:
         total_jokers = card_vals.pop("J")
-        max_val = max(card_vals, key=card_vals.get)
-        card_vals
+        max_key = max(card_vals, key=card_vals.get)
+        card_vals[max_key] += total_jokers
+        print("Hand and values: ", hand, card_vals)
 
-        # Five Kind
-        # if sorted(card_vals.values()) == [5]:
-        #     return 6
-        # if sorted(card_vals.values()) == [4]:
-        #     return 6
-        # if sorted(card_vals)
-        
-        # Four Kind
-
-
-
-        # print("Judging hand w/ J: ", hand)
-        # 
-        # print(sorted(card_vals.values()))
-        # 1 joker
-        # if sorted(card_vals.values()) == [4]:
-        #     return 6
-        # if sorted(card_vals.values()) == [1,3]:
-        #     return 5
-        # if sorted(card_vals.values()) == [2,2]:
-        #     return 4
-        # if sorted(card_vals.values()) == [1,1,2]:
-        #     return 3
-        # if sorted(card_vals.values()) == [1,1,1,1]:
-        #     return 1
-        # 2 joker
-        # if sorted(card_vals.values()) == [1,2]:
-        #     return 4
-        # if sorted(card_vals.values()) == [2,2]:
-        #     return 4
-        # if sorted(card_vals.values()) == [2,2]:
-        #     return 4
-        
-            
+    if sorted(card_vals.values()) == [5]:
+        return 6
+    if sorted(card_vals.values()) == [1,4]:
+        return 5
+    if sorted(card_vals.values()) == [2,3]:
+        return 4
+    if sorted(card_vals.values()) == [1,1,3]:
+        return 3
+    if sorted(card_vals.values()) == [1,2,2]:
+        return 2 
+    if sorted(card_vals.values()) == [1,1,1,2]:
+        return 1 
+    if sorted(card_vals.values()) == [1,1,1,1,1]:
+        return 0
+    print("Returning nothing?", hand,card_vals)
 
 
-        print(total_jokers)
-    return 0
 
 def sort_hand_p2(hand_1, hand_2):
     hand_1_type = judge_hand_p2(hand_1)
@@ -187,6 +148,9 @@ def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
         hands = [line.split(" ")[0] for line in lines]
+        # for hand in hands:
+        #     score = judge_hand_p2(hand)
+        #     print("Score:",score)
         bids = [int(line.split(" ")[1]) for line in lines]
         players = dict(map(lambda i,j : (i,j) , hands,bids))
 
