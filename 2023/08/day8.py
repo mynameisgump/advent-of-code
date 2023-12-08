@@ -20,12 +20,22 @@ args = parser.parse_args();
 
 # Data structures are prob getting to big. Need to reduce in some capacity. 
 
+# Idea 3:
+# Run once and get all Z stop points
+# say 3,5,7,2
+# Get max 
+# run other ghosts and REPLACE their answers
+# 4,6,7,4
+# run other ghosts and REPLACE their answers
+# 8,6,7,5
+# run other ghosts 
+
 def threaded_path(starting_key,instructions,path_map,z_steps,cur_index,thread_results,thread_num):
     key = starting_key
     found = False
     steps = 0
-    if len(z_steps) > 0:
-        steps = z_steps[-1]
+    if z_steps > 0:
+        steps = z_steps
     next_index = ""
     while not found:
         if cur_index > len(instructions)-1:
@@ -40,11 +50,12 @@ def threaded_path(starting_key,instructions,path_map,z_steps,cur_index,thread_re
         steps += 1
         cur_index += 1
         if key.endswith("Z"):
-            z_steps.append(steps)
+            z_steps = steps
             found = True
     thread_results[thread_num] = [z_steps,cur_index,key]
-    return z_steps
 
+def all_same(items):
+    return all(x == items[0] for x in items)
 
 def part1(filename):
     with open(filename) as f:
@@ -92,46 +103,57 @@ def part2(filename):
             ghost = {}
             ghost["key"] = key
             ghost["index"] = 0
-            ghost["z_stop_points"] = []
+            ghost["z_stop_points"] = 0
             ghosts.append(ghost)
         
         thread_results = {}
         hit = False
         while not hit:
+        #for i in range(4):
             threads = []
+            ghost_stop_points = [item["z_stop_points"] for item in ghosts]
+            max_stop_point = None
+            if max(ghost_stop_points) > 0:
+                max_stop_point = max(ghost_stop_points)
             for index in range(len(ghosts)):
                 ghost = ghosts[index]
-                x = threading.Thread(target=threaded_path, 
-                                        args=(ghost["key"],
-                                        instructions,
-                                        path_map,
-                                        ghost["z_stop_points"],
-                                        ghost["index"],
-                                        thread_results,
-                                        index))
-                threads.append(x)
-                x.start()
+                if not ghost["z_stop_points"] == max_stop_point:
+                    x = threading.Thread(target=threaded_path, 
+                                            args=(ghost["key"],
+                                            instructions,
+                                            path_map,
+                                            ghost["z_stop_points"],
+                                            ghost["index"],
+                                            thread_results,
+                                            index))
+                    threads.append(x)
+                    x.start()
                 
             for index, thread in enumerate(threads):
                 logging.info("Main    : before joining thread %d.", index)
                 thread.join()
                 logging.info("Main    : thread %d done", index)
-            max_values = []
+
             for index in range(len(ghosts)):
                 ghosts[index]["key"] = thread_results[index][2]
                 ghosts[index]["z_stop_points"] = thread_results[index][0]
-                max_values.append(thread_results[index][0][-1])
                 ghosts[index]["index"] = thread_results[index][1]
             
-            min_max_val = min(max_values)
-            for index in range(len(ghosts)):
-                ghosts[index]["z_stop_points"] = [i for i in ghosts[index]["z_stop_points"] if i >= min_max_val]
+            final_values = [item["z_stop_points"] for item in ghosts]
+            print(final_values)
+            if all_same(final_values):
+                hit = True
+                print(final_values[0])
+            # min_max_val = min(max_values)
+            # for index in range(len(ghosts)):
+            #     ghosts[index]["z_stop_points"] = [i for i in ghosts[index]["z_stop_points"] if i >= min_max_val]
             
-            intersections = [item["z_stop_points"] for item in ghosts]
-            intersection_point = list(set.intersection(*map(set,intersections)))
-            if(len(intersection_point) > 0):
-                print(intersection_point)
-                hit=True
+            # intersections = [item["z_stop_points"] for item in ghosts]
+            # intersection_point = list(set.intersection(*map(set,intersections)))
+            # if(len(intersection_point) > 0):
+            #     print(intersection_point)
+            #     hit=True
+
         #print(set.intersection(*map(set,list(thread_results.values()))))
         print("Done")
         #print(path_map)
