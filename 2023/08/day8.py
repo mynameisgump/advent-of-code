@@ -1,6 +1,7 @@
 import argparse
 import re
-from threading import Thread
+import threading
+import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
@@ -15,28 +16,34 @@ args = parser.parse_args();
 # 3. From there continue by passing back to the function the current Z steps 
 #    and the current key you were searching from
 
-def threaded_path(starting_key,instructions,path_map,total_z):
-    key = starting_key
 
+# 
+
+def threaded_path(starting_key,instructions,path_map,total_z,z_steps,cur_index,thread_results,thread_num):
+    key = starting_key
     found = False
     steps = 0 
     cur_index = 0
     key = starting_key
     z_steps = []
-    while not found and len(z_steps) < total_z:
+    while not found or len(z_steps) < total_z:
         if found:
             found = False
         if cur_index > len(instructions)-1:
             cur_index = 0
+
         char = instructions[cur_index]
         if char == "L":
             key = path_map[key][0]
         elif char == "R":
             key = path_map[key][1]
+
         steps += 1
         cur_index += 1
-        if key.endswith():
+        if key.endswith("Z"):
+            z_steps.append(steps)
             found = True
+    thread_results[thread_num] = z_steps
     return z_steps
 
 
@@ -73,19 +80,52 @@ def part2(filename):
         [instructions, nodes] = f.read().split("\n\n");
         pairs = [item.strip().split("=") for item in nodes.split("\n")]
         path_map = {}
-        sum_A = 0
+        a_keys = []
         for i in range(len(pairs)):
             pairs[i][0] = pairs[i][0].strip()
             if pairs[i][0].endswith("A"):
                 print(pairs[i][0])
-                sum_A += 1
+                a_keys.append(pairs[i][0])
             pairs[i][1] = re.sub("[()]",'',pairs[i][1]).strip().split(", ")
-            #print(pairs[i])
-
             path_map[pairs[i][0]] = pairs[i][1]
-        print(sum_A)
+        print(a_keys)
+        ghosts = []
+        for key in a_keys:
+            ghost = {}
+            ghost["key"] = key
+            ghost["index"] = 0
+            ghost["z_stop_points"] = []
+            ghosts.append(ghost)
+        
+
+        thread_results = {}
+        threads = []
+        for i in range(1):
+            for index in range(len(ghosts)):
+                print("Starting thread")
+                ghost = ghosts[index]
+                x = threading.Thread(target=threaded_path, 
+                                        args=(ghost["key"],
+                                        instructions,
+                                        path_map,
+                                        2000,
+                                        ghost["z_stop_points"],
+                                        ghost["index"],
+                                        thread_results,
+                                        index))
+                threads.append(x)
+                x.start()
+        
+        for index, thread in enumerate(threads):
+            logging.info("Main    : before joining thread %d.", index)
+            thread.join()
+            logging.info("Main    : thread %d done", index)
+        
+        print(thread_results)
+        print(set.intersection(*map(set,list(thread_results.values()))))
+
         #print(path_map)
-        for i in tange
+
 
 if __name__ == "__main__":
     input_selection = args.input
