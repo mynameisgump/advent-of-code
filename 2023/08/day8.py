@@ -129,7 +129,6 @@ def part2(filename):
             
             intersections = [item["z_stop_points"] for item in ghosts]
             intersection_point = list(set.intersection(*map(set,intersections)))
-            print(intersections)
             if(len(intersection_point) > 0):
                 print(intersection_point)
                 hit=True
