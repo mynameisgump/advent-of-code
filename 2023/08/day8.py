@@ -87,7 +87,6 @@ def part2(filename):
                 a_keys.append(pairs[i][0])
             pairs[i][1] = re.sub("[()]",'',pairs[i][1]).strip().split(", ")
             path_map[pairs[i][0]] = pairs[i][1]
-        print(a_keys)
         ghosts = []
         for key in a_keys:
             ghost = {}
@@ -97,11 +96,11 @@ def part2(filename):
             ghosts.append(ghost)
         
         thread_results = {}
-        for i in range(4):
+        
+        for i in range(10):
             threads = []
             for index in range(len(ghosts)):
                 ghost = ghosts[index]
-                print("Ghost: ", ghost)
                 x = threading.Thread(target=threaded_path, 
                                         args=(ghost["key"],
                                         instructions,
@@ -117,11 +116,21 @@ def part2(filename):
                 logging.info("Main    : before joining thread %d.", index)
                 thread.join()
                 logging.info("Main    : thread %d done", index)
+            max_values = []
             for index in range(len(ghosts)):
                 ghosts[index]["key"] = thread_results[index][2]
                 ghosts[index]["z_stop_points"] = thread_results[index][0]
+                max_values.append(thread_results[index][0][-1])
                 ghosts[index]["index"] = thread_results[index][1]
-            print(thread_results)
+            
+            min_max_val = min(max_values)
+            for index in range(len(ghosts)):
+                ghosts[index]["z_stop_points"] = [i for i in ghosts[index]["z_stop_points"] if i >= min_max_val]
+            
+            intersections = [item["z_stop_points"] for item in ghosts]
+            intersection_point = list(set.intersection(*map(set,intersections)))
+            if(len(intersection_point) > 0):
+                print(intersection_point)
         #print(set.intersection(*map(set,list(thread_results.values()))))
 
         #print(path_map)
