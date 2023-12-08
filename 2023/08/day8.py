@@ -2,6 +2,7 @@ import argparse
 import re
 import threading
 import logging
+from math import gcd
 
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
@@ -57,6 +58,20 @@ def threaded_path(starting_key,instructions,path_map,z_steps,cur_index,thread_re
 def all_same(items):
     return all(x == items[0] for x in items)
 
+def lcm(x, y):
+   if x > y:
+       greater = x
+   else:
+       greater = y
+
+   while(True):
+       if ((greater % x == 0) and (greater % y == 0)):
+           lcm = greater
+           break
+       greater += 1
+
+   return lcm
+
 def part1(filename):
     with open(filename) as f:
         [instructions, nodes] = f.read().split("\n\n");
@@ -108,8 +123,8 @@ def part2(filename):
         
         thread_results = {}
         hit = False
-        while not hit:
-        #for i in range(4):
+        #while not hit:
+        for i in range(1):
             threads = []
             ghost_stop_points = [item["z_stop_points"] for item in ghosts]
             max_stop_point = None
@@ -140,10 +155,16 @@ def part2(filename):
                 ghosts[index]["index"] = thread_results[index][1]
             
             final_values = [item["z_stop_points"] for item in ghosts]
-            print(final_values)
-            if all_same(final_values):
-                hit = True
-                print(final_values[0])
+            
+            lcm = 1
+            for i in final_values:
+                lcm = lcm*i//gcd(lcm, i)
+            print("Result: ",lcm)
+            break
+            # if all_same(final_values):
+            #     hit = True
+            #     print(final_values[0])
+
             # min_max_val = min(max_values)
             # for index in range(len(ghosts)):
             #     ghosts[index]["z_stop_points"] = [i for i in ghosts[index]["z_stop_points"] if i >= min_max_val]
