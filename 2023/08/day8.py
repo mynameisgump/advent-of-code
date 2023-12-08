@@ -23,9 +23,9 @@ args = parser.parse_args();
 def threaded_path(starting_key,instructions,path_map,z_steps,cur_index,thread_results,thread_num):
     key = starting_key
     found = False
-    steps = 0 
-    cur_index = 0
-    z_steps = []
+    steps = 0
+    if len(z_steps) > 0:
+        steps = z_steps[-1]
     next_index = ""
     while not found:
         if cur_index > len(instructions)-1:
@@ -96,29 +96,32 @@ def part2(filename):
             ghost["z_stop_points"] = []
             ghosts.append(ghost)
         
-        
         thread_results = {}
-        threads = []
-        for index in range(len(ghosts)):
-            print("Starting thread")
-            ghost = ghosts[index]
-            x = threading.Thread(target=threaded_path, 
-                                    args=(ghost["key"],
-                                    instructions,
-                                    path_map,
-                                    ghost["z_stop_points"],
-                                    ghost["index"],
-                                    thread_results,
-                                    index))
-            threads.append(x)
-            x.start()
-            
-        for index, thread in enumerate(threads):
-            logging.info("Main    : before joining thread %d.", index)
-            thread.join()
-            logging.info("Main    : thread %d done", index)
-        
-        print(thread_results)
+        for i in range(4):
+            threads = []
+            for index in range(len(ghosts)):
+                ghost = ghosts[index]
+                print("Ghost: ", ghost)
+                x = threading.Thread(target=threaded_path, 
+                                        args=(ghost["key"],
+                                        instructions,
+                                        path_map,
+                                        ghost["z_stop_points"],
+                                        ghost["index"],
+                                        thread_results,
+                                        index))
+                threads.append(x)
+                x.start()
+                
+            for index, thread in enumerate(threads):
+                logging.info("Main    : before joining thread %d.", index)
+                thread.join()
+                logging.info("Main    : thread %d done", index)
+            for index in range(len(ghosts)):
+                ghosts[index]["key"] = thread_results[index][2]
+                ghosts[index]["z_stop_points"] = thread_results[index][0]
+                ghosts[index]["index"] = thread_results[index][1]
+            print(thread_results)
         #print(set.intersection(*map(set,list(thread_results.values()))))
 
         #print(path_map)
