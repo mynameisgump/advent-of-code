@@ -15,20 +15,19 @@ args = parser.parse_args();
 # 2. Create threads which wait for others to end when they hit a Z
 # 3. From there continue by passing back to the function the current Z steps 
 #    and the current key you were searching from
+# After each run, get the max values of each. Should be at the end of the list.
+# Remove everthing below the min of those values.
 
+# Data structures are prob getting to big. Need to reduce in some capacity. 
 
-# 
-
-def threaded_path(starting_key,instructions,path_map,total_z,z_steps,cur_index,thread_results,thread_num):
+def threaded_path(starting_key,instructions,path_map,z_steps,cur_index,thread_results,thread_num):
     key = starting_key
     found = False
     steps = 0 
     cur_index = 0
-    key = starting_key
     z_steps = []
-    while not found or len(z_steps) < total_z:
-        if found:
-            found = False
+    next_index = ""
+    while not found:
         if cur_index > len(instructions)-1:
             cur_index = 0
 
@@ -43,7 +42,7 @@ def threaded_path(starting_key,instructions,path_map,total_z,z_steps,cur_index,t
         if key.endswith("Z"):
             z_steps.append(steps)
             found = True
-    thread_results[thread_num] = z_steps
+    thread_results[thread_num] = [z_steps,cur_index,key]
     return z_steps
 
 
@@ -97,32 +96,30 @@ def part2(filename):
             ghost["z_stop_points"] = []
             ghosts.append(ghost)
         
-
+        
         thread_results = {}
         threads = []
-        for i in range(1):
-            for index in range(len(ghosts)):
-                print("Starting thread")
-                ghost = ghosts[index]
-                x = threading.Thread(target=threaded_path, 
-                                        args=(ghost["key"],
-                                        instructions,
-                                        path_map,
-                                        2000,
-                                        ghost["z_stop_points"],
-                                        ghost["index"],
-                                        thread_results,
-                                        index))
-                threads.append(x)
-                x.start()
-        
+        for index in range(len(ghosts)):
+            print("Starting thread")
+            ghost = ghosts[index]
+            x = threading.Thread(target=threaded_path, 
+                                    args=(ghost["key"],
+                                    instructions,
+                                    path_map,
+                                    ghost["z_stop_points"],
+                                    ghost["index"],
+                                    thread_results,
+                                    index))
+            threads.append(x)
+            x.start()
+            
         for index, thread in enumerate(threads):
             logging.info("Main    : before joining thread %d.", index)
             thread.join()
             logging.info("Main    : thread %d done", index)
         
         print(thread_results)
-        print(set.intersection(*map(set,list(thread_results.values()))))
+        #print(set.intersection(*map(set,list(thread_results.values()))))
 
         #print(path_map)
 
