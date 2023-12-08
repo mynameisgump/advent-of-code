@@ -96,8 +96,8 @@ def part2(filename):
             ghosts.append(ghost)
         
         thread_results = {}
-        
-        for i in range(10):
+        hit = False
+        while not hit:
             threads = []
             for index in range(len(ghosts)):
                 ghost = ghosts[index]
@@ -129,10 +129,12 @@ def part2(filename):
             
             intersections = [item["z_stop_points"] for item in ghosts]
             intersection_point = list(set.intersection(*map(set,intersections)))
+            print(intersections)
             if(len(intersection_point) > 0):
                 print(intersection_point)
+                hit=True
         #print(set.intersection(*map(set,list(thread_results.values()))))
-
+        print("Done")
         #print(path_map)
 
 
