@@ -4,8 +4,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1"])
 args = parser.parse_args();
-# Attempt 1: 1772145894 Too High
-# Attempt 2: 1772145754 (Bug was using Sum(diff))
 def part1(filename):
     with open(filename) as f:
         lines = [list(map(int, item.split(" "))) for item in f.read().split("\n")];
@@ -56,7 +54,6 @@ def part2(filename):
                 last_val_1 = seq[-1]
                 last_val_2 = seq_2[-2]
                 seq_2[-1] = last_val_2+last_val_1
-            #print("seq_result", sequences[-1][-1]) 
             total_sum += sequences[-1][-1]
         print("Total Sum: ",total_sum)
 
@@ -74,3 +71,5 @@ if __name__ == "__main__":
             part1(filename)
         case "p2":
             part2(filename)
+
+def main
