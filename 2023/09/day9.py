@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1"])
 args = parser.parse_args();
-
+# Attempt 1: 1772145894 Too High
 def part1(filename):
     with open(filename) as f:
         lines = [list(map(int, item.split(" "))) for item in f.read().split("\n")];
