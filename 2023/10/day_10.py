@@ -6,8 +6,6 @@ parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
 def get_pipe_pos(pipe_char,position):
-    print("In Get PipPos")
-    print(pipe_char)
     positions = []
     if pipe_char == "|":
         positions.append((position[0]-1,position[1]))
@@ -32,12 +30,9 @@ def get_pipe_pos(pipe_char,position):
         positions.append((position[0],position[1]+1))
         positions.append((position[0]-1,position[1]))
         positions.append((position[0]+1,position[1]))
-    print("Pipe pos: ", positions)
     return positions
 
 def valid_positions(start_position, area_map):
-    print("In Valid positions")
-    print("Position:",start_position)
     starting_char = area_map[start_position[0]][start_position[1]]
     if starting_char == "S":
         valid_pos = []
@@ -68,13 +63,20 @@ def part1(filename):
 
         visited = set()
         queue = [start_position]
-        for i in range(3):
+        print("Start Post:", start_position)
+        for i in range(10):
+            print("Current Queue:", queue)
             cur_pos = queue.pop()
+            print("Current Position: ",cur_pos)
             visited.add(cur_pos)
             path.add(cur_pos)
             new_positions = valid_positions(cur_pos, area_map)
-            queue += new_positions
-            print(new_positions)
+            print("New Positions: ",new_positions)
+            for new_pos in new_positions:
+                print("New pos:", new_pos)
+                if new_pos not in visited:
+                    queue.append(new_pos)
+            print()
 
 def part2(filename):
     with open(filename) as f:
