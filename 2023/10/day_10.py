@@ -94,19 +94,20 @@ def get_s_pipe_type(start_position, area_map):
             if start_position in positions:
                 valid_pos.append(adj_pos)
         init = start_position
-        if (init[0]-1,init[1]) in valid_pos and (init[0]+1,init[1]):
+        if (init[0]-1,init[1]) in valid_pos and (init[0]+1,init[1]) in valid_pos:
             return "|"
-        elif (init[0],init[1]-1) in valid_pos and (init[0],init[1]+1):
+        elif (init[0],init[1]-1) in valid_pos and (init[0],init[1]+1) in valid_pos:
+            print("Dashy")
             return "-"
-        elif (init[0]-1,init[1]) in valid_pos and (init[0]+1,init[1]):
+        elif (init[0]-1,init[1]) in valid_pos and (init[0]+1,init[1]) in valid_pos:
             return "|"
-        elif (init[0],init[1]+1) in valid_pos and (init[0],init[1]-1):
+        elif (init[0]+1,init[1]) in valid_pos and (init[0],init[1]+1) in valid_pos:
             return "F"
-        elif (init[0]-1,init[1]) in valid_pos and (init[0],init[1]+1):
+        elif (init[0]-1,init[1]) in valid_pos and (init[0],init[1]+1) in valid_pos:
             return "L"
-        elif (init[0],init[1]-1) in valid_pos and (init[0]+1,init[1]):
+        elif (init[0],init[1]-1) in valid_pos and (init[0]+1,init[1]) in valid_pos:
             return "7"
-        elif (init[0],init[1]-1) in valid_pos and (init[0]-1,init[1]):
+        elif (init[0],init[1]-1) in valid_pos and (init[0]-1,init[1]) in valid_pos:
             return "J"
         
 def part1(filename):
@@ -166,15 +167,14 @@ def part2(filename):
             for new_pos in new_positions:
                 if new_pos not in visited:
                     queue.append(new_pos)
-
+        path.add(start_position)
         area_map[start_position[0]][start_position[1]] = get_s_pipe_type(start_position,area_map)
         hits = 0
         for row in range(len(area_map)):
             for column in range(len(area_map[0])):
                 #print("Current Val:", (row,column))
                 if (row,column) not in path:                
-                    left_to_right_ray = set([(row,n) for n in range(0, len(area_map[0]), 1)])
-                    left_to_right_ray.remove((row,column))
+                    left_to_right_ray = set([(row,n) for n in range(0, column, 1)])
 
                     l_to_r_count = 0
                     l_to_r_inter = list(path.intersection(left_to_right_ray))
@@ -183,7 +183,8 @@ def part2(filename):
                     l_to_r_corner_pairs = [(l_to_r_corner_chars[i],l_to_r_corner_chars[i + 1]) for i in range(0, len(l_to_r_corner_chars), 2)]
                     l_to_r_pair_vals = sum(list(map(map_corner_pair,l_to_r_corner_pairs)))
                     l_to_r_freq = dict(collections.Counter(list(map(map_pos,path.intersection(left_to_right_ray)))))
-
+        
+                    
                     final_val = 0
                     final_val += l_to_r_pair_vals
                     if "|" in l_to_r_freq:
