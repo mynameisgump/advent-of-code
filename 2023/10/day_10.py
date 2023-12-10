@@ -1,10 +1,24 @@
 import argparse
 import re
+import collections
 
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
-parser.add_argument("input", choices=["i1","ex1","ex2","ex3"])
+parser.add_argument("input", choices=["i1","ex1","ex2","ex3","tst"])
 args = parser.parse_args();
+
+# Two main options that I could try:
+# Calc edges and full tuples ((0,1)(0,2)(0,3)) etc. and check for how many edges total in the raycast
+# Figure out weird count math for determining this
+# What we know:
+# there will be an even number of corners in the cast every time, so I would say count them as 1
+# For left and Right if there's a corner, the only thing that matter is how many |
+def corner_count(freq_dict):
+    count = 0
+    for key, value in freq_dict.items():
+        if key != "-" and key != "|":
+            count += value
+    return count
 
 def get_pipe_pos(pipe_char,position):
     positions = []
@@ -48,7 +62,6 @@ def valid_positions(start_position, area_map):
         new_positions = get_pipe_pos(starting_char,start_position)
         return new_positions
         
-
 def part1(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
@@ -84,7 +97,6 @@ def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
         area_map = [[*line] for line in lines]
-
         def map_pos(pos):
             return area_map[pos[0]][pos[1]]
 
@@ -99,21 +111,14 @@ def part2(filename):
         path = set()
         visited = set()
         queue = [start_position]
-        #print("Start Post:", start_position)
         while len(queue) > 0:
-            #print("Current Queue:", queue)
             cur_pos = queue.pop()
-            #print("Current Position: ",cur_pos)
             visited.add(cur_pos)
             path.add(cur_pos)
             new_positions = valid_positions(cur_pos, area_map)
-            #print("New Positions: ",new_positions)
             for new_pos in new_positions:
-                #print("New pos:", new_pos)
                 if new_pos not in visited:
                     queue.append(new_pos)
-            #print()
-        #print(len(path)/2)
         hits = 0
         for row in range(len(area_map)):
             for column in range(len(area_map[0])):
@@ -125,21 +130,34 @@ def part2(filename):
                     up_ray = set([(n,column) for n in range(0, row, 1)])
                     down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
 
-                    left_inter = [k for k in list(map(map_pos,path.intersection(left_ray))) if '-' not in k]
-                    right_inter = [k for k in list(map(map_pos,path.intersection(right_ray))) if '-' not in k]
-                    up_inter = [k for k in list(map(map_pos,path.intersection(up_ray))) if '|' not in k]
-                    down_inter = [k for k in list(map(map_pos,path.intersection(down_ray))) if '|' not in k]
+                    left_inter = dict(collections.Counter(list(map(map_pos,path.intersection(left_ray)))))
+                    right_inter = dict(collections.Counter(list(map(map_pos,path.intersection(right_ray)))))
+                    up_inter = dict(collections.Counter(list(map(map_pos,path.intersection(up_ray)))))
+                    down_inter = dict(collections.Counter(list(map(map_pos,path.intersection(down_ray)))))
+                    print()
+                    if row == 3 and column == 14:
+                        print("YYYYYYYEEEEEHHHHHHHH")
+                    print("Point: ", (row,column))
+                    print("Left Ita: ",left_inter)
+                    print("Right Ita: ", right_inter)
+                    print("Up ita: ", up_inter)
+                    print("Down ita: ", down_inter)
 
+                    print("Corner counts: ", corner_count(left_inter), corner_count(right_inter), corner_count(up_inter),corner_count(down_inter))
+                    if "|" in left_inter:
+                        print("Filtered Left: ", left_inter["|"])
+
+                    left_heur = 
                     # right_inter = len(path.intersection(right_ray))
                     # up_inter = len(path.intersection(up_ray))
                     # down_inter = len(path.intersection(down_ray))
 
-                    if len(left_inter) % 2 and \
-                        len(right_inter) % 2 and \
-                        len(up_inter) % 2 and \
-                        len(down_inter) % 2:
+                    if sum(left_inter.values()) % 2 and \
+                        sum(right_inter.values()) % 2 and \
+                        sum(up_inter.values()) % 2 and \
+                        sum(down_inter.values()) % 2:
                         print(left_inter,right_inter,up_inter,down_inter)
-                        print("Hit val:", (row,column))
+                        print("HiTTTTTTTTt val:", (row,column))
                         hits += 1
         print("Total hits: ",hits)
 
@@ -156,6 +174,8 @@ if __name__ == "__main__":
             filename="example2.txt"
         case "ex3":
             filename="example3.txt"
+        case "test":
+            filename="test.txt"
     match solution_selection:
         case "p1":
             part1(filename)
