@@ -195,44 +195,43 @@ def part2(filename):
                     l_to_r_corner_chars = list(filter(filter_straight,list(map(map_pos,l_to_r_inter))))
                     l_to_r_corner_pairs = [(l_to_r_corner_chars[i],l_to_r_corner_chars[i + 1]) for i in range(0, len(l_to_r_corner_chars), 2)]
                     l_to_r_pair_vals = list(map(map_corner_pair,l_to_r_corner_pairs))
-                    
+                    l_to_r_freq = dict(collections.Counter(list(map(map_pos,path.intersection(left_to_right_ray)))))
+
                     # u_to_d_count = 0
                     # u_to_d_inter = list(path.intersection(up_to_down_ray))
                     # u_to_d_inter.sort(key = lambda x: x[1]) 
                     # u_to_d_corner_chars = list(filter(filter_straight,list(map(map_pos,u_to_d_inter))))
                     # u_to_d_corner_pairs = [(u_to_d_corner_chars[i],u_to_d_corner_chars[i + 1]) for i in range(0, len(u_to_d_corner_chars), 2)]
                     # u_to_d_pair_vals = list(map(map_corner_pair,u_to_d_corner_pairs))
-
-                    print(row,column)
-                    print("Iter: ", l_to_r_pair_vals)
                     
 
-                    u_to_d_iter = list(map(map_pos,path.intersection(up_to_down_ray)))
+                    # u_to_d_iter = list(map(map_pos,path.intersection(up_to_down_ray)))
 
-                    left_to_right_freq = dict(collections.Counter(list(map(map_pos,path.intersection(left_to_right_ray)))))
-                    up_to_down_freq = dict(collections.Counter(list(map(map_pos,path.intersection(up_to_down_ray)))))
+                    # up_to_down_freq = dict(collections.Counter(list(map(map_pos,path.intersection(up_to_down_ray)))))
 
                     if row == 3 and column == 14:
                         print()
                         print("YYYYYYYEEEEEHHHHHHHH")
                         print("Point: ", (row,column))
-                        print("Left to right Ita:", left_to_right_freq)
-                        print("Up to down Ita: ", up_to_down_freq)
-                        print("Corner counts: ", corner_count(left_to_right_freq)//2)
+                        print("Iter: ", l_to_r_pair_vals)
+                        print("Corner Vals: ", l_to_r_pair_vals)
+                        print("Freq: ", l_to_r_freq)
+                        # print("Left to right Ita:", left_to_right_freq)
+                        # print("Up to down Ita: ", up_to_down_freq)
+                        # print("Corner counts: ", corner_count(left_to_right_freq)//2)
                     
-                    left_to_right_count = 0
-                    left_to_right_count += corner_count(left_to_right_freq)//2
-                    if "|" in left_to_right_freq:
-                        left_to_right_count += left_to_right_freq["|"]
-                    up_to_down_count = 0
-                    up_to_down_count += corner_count(up_to_down_freq)//2
-                    if "-" in up_to_down_freq:
-                        up_to_down_count += up_to_down_freq["-"]
+                    # left_to_right_count = 0
+                    # left_to_right_count += corner_count(left_to_right_freq)//2
+                    # if "|" in left_to_right_freq:
+                    #     left_to_right_count += left_to_right_freq["|"]
+                    # up_to_down_count = 0
+                    # up_to_down_count += corner_count(up_to_down_freq)//2
+                    # if "-" in up_to_down_freq:
+                    #     up_to_down_count += up_to_down_freq["-"]
 
-                    if left_to_right_count % 2 and \
-                        up_to_down_count % 2:
-                        #print("HiTTTTTTTTt val:", (row,column))
-                        hits += 1
+                    # if left_to_right_count % 2 and \
+                    #     up_to_down_count % 2:
+                    #     hits += 1
         print("Total hits: ",hits)
 
 if __name__ == "__main__":
