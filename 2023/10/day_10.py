@@ -194,10 +194,17 @@ def part2(filename):
                     l_to_r_inter.sort(key = lambda x: x[1]) 
                     l_to_r_corner_chars = list(filter(filter_straight,list(map(map_pos,l_to_r_inter))))
                     l_to_r_corner_pairs = [(l_to_r_corner_chars[i],l_to_r_corner_chars[i + 1]) for i in range(0, len(l_to_r_corner_chars), 2)]
-                    #l_to_r_inter_chars = list(map(map_pos,l_to_r_inter))
-                    #filtered_l_to_r_chars = list(filter(filter_straight,l_to_r_inter_chars))
+                    l_to_r_pair_vals = list(map(map_corner_pair,l_to_r_corner_pairs))
+                    
+                    # u_to_d_count = 0
+                    # u_to_d_inter = list(path.intersection(up_to_down_ray))
+                    # u_to_d_inter.sort(key = lambda x: x[1]) 
+                    # u_to_d_corner_chars = list(filter(filter_straight,list(map(map_pos,u_to_d_inter))))
+                    # u_to_d_corner_pairs = [(u_to_d_corner_chars[i],u_to_d_corner_chars[i + 1]) for i in range(0, len(u_to_d_corner_chars), 2)]
+                    # u_to_d_pair_vals = list(map(map_corner_pair,u_to_d_corner_pairs))
+
                     print(row,column)
-                    print("Iter: ", list(map(map_corner_pair,l_to_r_corner_pairs)))
+                    print("Iter: ", l_to_r_pair_vals)
                     
 
                     u_to_d_iter = list(map(map_pos,path.intersection(up_to_down_ray)))
