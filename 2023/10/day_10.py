@@ -55,16 +55,16 @@ def part1(filename):
         for area in area_map:
             print(area)
         start_position = 0
-        path = set()
         for i in range(len(lines)):
             line = lines[i]
             if line.find("S") != -1:
                 start_position = (i,line.find("S"))
 
+        path = set()
         visited = set()
         queue = [start_position]
         print("Start Post:", start_position)
-        for i in range(10):
+        while len(queue) > 0:
             print("Current Queue:", queue)
             cur_pos = queue.pop()
             print("Current Position: ",cur_pos)
@@ -77,7 +77,8 @@ def part1(filename):
                 if new_pos not in visited:
                     queue.append(new_pos)
             print()
-
+        # 13884 to high, divide by 2    
+        print(len(path)/2)
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
