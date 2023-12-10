@@ -20,8 +20,8 @@ args = parser.parse_args();
 # 
 corner_pair_val = {
     ('F','J'): 1,
-    ('F','7'): 0,
-    ('L','J'): 0,
+    ('F','7'): 2,
+    ('L','J'): 2,
     ('L','7'): 1,
 }
 
@@ -194,7 +194,7 @@ def part2(filename):
                     l_to_r_inter.sort(key = lambda x: x[1]) 
                     l_to_r_corner_chars = list(filter(filter_straight,list(map(map_pos,l_to_r_inter))))
                     l_to_r_corner_pairs = [(l_to_r_corner_chars[i],l_to_r_corner_chars[i + 1]) for i in range(0, len(l_to_r_corner_chars), 2)]
-                    l_to_r_pair_vals = list(map(map_corner_pair,l_to_r_corner_pairs))
+                    l_to_r_pair_vals = sum(list(map(map_corner_pair,l_to_r_corner_pairs)))
                     l_to_r_freq = dict(collections.Counter(list(map(map_pos,path.intersection(left_to_right_ray)))))
 
                     # u_to_d_count = 0
@@ -208,14 +208,29 @@ def part2(filename):
                     # u_to_d_iter = list(map(map_pos,path.intersection(up_to_down_ray)))
 
                     # up_to_down_freq = dict(collections.Counter(list(map(map_pos,path.intersection(up_to_down_ray)))))
-
+                    final_val = 0
+                    final_val += l_to_r_pair_vals
+                    if "|" in l_to_r_freq:
+                        final_val += l_to_r_freq["|"]
+                    
                     if row == 3 and column == 14:
                         print()
                         print("YYYYYYYEEEEEHHHHHHHH")
                         print("Point: ", (row,column))
+                        print(l_to_r_inter)
                         print("Iter: ", l_to_r_pair_vals)
                         print("Corner Vals: ", l_to_r_pair_vals)
-                        print("Freq: ", l_to_r_freq)
+                        print("Final Val: ", final_val)
+
+                    if final_val % 2:
+                        print()
+                        print("YYYYYYYEEEEEHHHHHHHH")
+                        print("Point: ", (row,column))
+                        print(l_to_r_inter)
+                        print("Iter: ", l_to_r_pair_vals)
+                        print("Corner Vals: ", l_to_r_pair_vals)
+                        print("Final Val: ", final_val)
+                        hits += 1
                         # print("Left to right Ita:", left_to_right_freq)
                         # print("Up to down Ita: ", up_to_down_freq)
                         # print("Corner counts: ", corner_count(left_to_right_freq)//2)
