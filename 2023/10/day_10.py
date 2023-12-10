@@ -13,6 +13,11 @@ args = parser.parse_args();
 # What we know:
 # there will be an even number of corners in the cast every time, so I would say count them as 1
 # For left and Right if there's a corner, the only thing that matter is how many |
+
+# New Test: 
+# Full Columns and Rows
+# Filter out | or - depending on the problem 
+# 
 def corner_count(freq_dict):
     count = 0
     for key, value in freq_dict.items():
@@ -130,24 +135,31 @@ def part2(filename):
                     up_ray = set([(n,column) for n in range(0, row, 1)])
                     down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
 
+                    left_to_right_ray = set([(row,n) for n in range(0, len(area_map[0]), 1)])
+                    left_to_right_ray.remove((row,column))
+                    up_to_down_ray = set([(n,column) for n in range(0, len(area_map), 1)]) 
+                    up_to_down_ray.remove((row,column))
+
                     left_inter = dict(collections.Counter(list(map(map_pos,path.intersection(left_ray)))))
                     right_inter = dict(collections.Counter(list(map(map_pos,path.intersection(right_ray)))))
                     up_inter = dict(collections.Counter(list(map(map_pos,path.intersection(up_ray)))))
                     down_inter = dict(collections.Counter(list(map(map_pos,path.intersection(down_ray)))))
+
+                    left_to_right_inter = dict(collections.Counter(list(map(map_pos,path.intersection(left_to_right_ray)))))
+                    up_to_down_inter = dict(collections.Counter(list(map(map_pos,path.intersection(up_to_down_ray)))))
+
                     print()
                     if row == 3 and column == 14:
                         print("YYYYYYYEEEEEHHHHHHHH")
-                    print("Point: ", (row,column))
-                    print("Left Ita: ",left_inter)
-                    print("Right Ita: ", right_inter)
-                    print("Up ita: ", up_inter)
-                    print("Down ita: ", down_inter)
+                        print("Point: ", (row,column))
+                    # print("Left Ita: ",left_inter)
+                    # print("Right Ita: ", right_inter)
+                    # print("Up ita: ", up_inter)
+                    # print("Down ita: ", down_inter)
+                        print("Left to right Ita:", left_to_right_inter)
 
-                    print("Corner counts: ", corner_count(left_inter), corner_count(right_inter), corner_count(up_inter),corner_count(down_inter))
-                    if "|" in left_inter:
-                        print("Filtered Left: ", left_inter["|"])
+                        print("Corner counts: ", corner_count(left_to_right_inter)//2)
 
-                    left_heur = 
                     # right_inter = len(path.intersection(right_ray))
                     # up_inter = len(path.intersection(up_ray))
                     # down_inter = len(path.intersection(down_ray))
