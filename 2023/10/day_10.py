@@ -1,5 +1,6 @@
 import argparse
 import re
+
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2","ex3"])
@@ -98,21 +99,21 @@ def part2(filename):
         path = set()
         visited = set()
         queue = [start_position]
-        print("Start Post:", start_position)
+        #print("Start Post:", start_position)
         while len(queue) > 0:
-            print("Current Queue:", queue)
+            #print("Current Queue:", queue)
             cur_pos = queue.pop()
-            print("Current Position: ",cur_pos)
+            #print("Current Position: ",cur_pos)
             visited.add(cur_pos)
             path.add(cur_pos)
             new_positions = valid_positions(cur_pos, area_map)
-            print("New Positions: ",new_positions)
+            #print("New Positions: ",new_positions)
             for new_pos in new_positions:
-                print("New pos:", new_pos)
+                #print("New pos:", new_pos)
                 if new_pos not in visited:
                     queue.append(new_pos)
-            print()
-        print(len(path)/2)
+            #print()
+        #print(len(path)/2)
         hits = 0
         for row in range(len(area_map)):
             for column in range(len(area_map[0])):
@@ -124,18 +125,22 @@ def part2(filename):
                     up_ray = set([(n,column) for n in range(0, row, 1)])
                     down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
 
-                    left_inter = list(map(map_pos,path.intersection(left_ray)))
-                    right_inter = len(path.intersection(right_ray))
-                    up_inter = len(path.intersection(up_ray))
-                    down_inter = len(path.intersection(down_ray))
-                    print("Left inter: ",left_inter)
+                    left_inter = [k for k in list(map(map_pos,path.intersection(left_ray))) if '-' not in k]
+                    right_inter = [k for k in list(map(map_pos,path.intersection(right_ray))) if '-' not in k]
+                    up_inter = [k for k in list(map(map_pos,path.intersection(up_ray))) if '|' not in k]
+                    down_inter = [k for k in list(map(map_pos,path.intersection(down_ray))) if '|' not in k]
 
-                    # if len(path.intersection(left_ray)) % 2 and \
-                    #     len(path.intersection(right_ray)) % 2 and \
-                    #     len(path.intersection(up_ray)) % 2 and \
-                    #     len(path.intersection(down_ray)) % 2:
-                    #     print("Hit val:", (row,column))
-                    #     hits += 1
+                    # right_inter = len(path.intersection(right_ray))
+                    # up_inter = len(path.intersection(up_ray))
+                    # down_inter = len(path.intersection(down_ray))
+
+                    if len(left_inter) % 2 and \
+                        len(right_inter) % 2 and \
+                        len(up_inter) % 2 and \
+                        len(down_inter) % 2:
+                        print(left_inter,right_inter,up_inter,down_inter)
+                        print("Hit val:", (row,column))
+                        hits += 1
         print("Total hits: ",hits)
 
 if __name__ == "__main__":
