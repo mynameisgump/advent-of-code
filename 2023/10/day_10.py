@@ -6,7 +6,8 @@ parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
 def get_pipe_pos(pipe_char,position):
-
+    print("In Get PipPos")
+    print(pipe_char)
     positions = []
     if pipe_char == "|":
         positions.append((position[0]-1,position[1]))
@@ -26,30 +27,31 @@ def get_pipe_pos(pipe_char,position):
     elif pipe_char == "F":
         positions.append((position[0]+1,position[1]))
         positions.append((position[0],position[1]+1))
+    elif pipe_char == "S":
+        positions.append((position[0],position[1]-1))
+        positions.append((position[0],position[1]+1))
+        positions.append((position[0]-1,position[1]))
+        positions.append((position[0]+1,position[1]))
+    print("Pipe pos: ", positions)
     return positions
 
-def valid_positions(position, area_map):
+def valid_positions(start_position, area_map):
     print("In Valid positions")
-    print("Position:",position)
-    adj_positions = [(position[0],position[1]+1),
-                (position[0],position[1]-1),
-                (position[0]+1,position[1]),
-                (position[0]-1,position[1])
-                ]
-    valid_pos = set()
-    valid_pos.add(position)
-    for adj_pos in adj_positions:
-        print("Pain")
-        pos_char = area_map[adj_pos[0]][adj_pos[1]]
-        positions = get_pipe_pos(pos_char,adj_pos)
-        print(pos_char)
-        print(positions)
-        if position in positions:
-            valid_pos.add(adj_pos)
-        # print(pos_char)
-        # print(adj_pos)
-    print(valid_pos)
-    pass
+    print("Position:",start_position)
+    starting_char = area_map[start_position[0]][start_position[1]]
+    if starting_char == "S":
+        valid_pos = []
+        adj_positions = get_pipe_pos(starting_char,start_position)
+        for adj_pos in adj_positions:
+            pos_char = area_map[adj_pos[0]][adj_pos[1]]
+            positions = get_pipe_pos(pos_char,adj_pos)
+            if start_position in positions:
+                valid_pos.append(adj_pos)
+        return valid_pos
+    else:
+        new_positions = get_pipe_pos(starting_char,start_position)
+        return new_positions
+        
 
 def part1(filename):
     with open(filename) as f:
@@ -57,17 +59,22 @@ def part1(filename):
         area_map = [[*line] for line in lines]
         for area in area_map:
             print(area)
-        print(lines)
         start_position = 0
         path = set()
         for i in range(len(lines)):
             line = lines[i]
             if line.find("S") != -1:
                 start_position = (i,line.find("S"))
-        print(start_position)
-        path.add(start_position)
-        test = valid_positions(start_position, area_map)
-        print("Test:",test)
+
+        visited = set()
+        queue = [start_position]
+        for i in range(3):
+            cur_pos = queue.pop()
+            visited.add(cur_pos)
+            path.add(cur_pos)
+            new_positions = valid_positions(cur_pos, area_map)
+            queue += new_positions
+            print(new_positions)
 
 def part2(filename):
     with open(filename) as f:
