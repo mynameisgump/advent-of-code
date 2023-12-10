@@ -77,11 +77,51 @@ def part1(filename):
                 if new_pos not in visited:
                     queue.append(new_pos)
             print()
-        # 13884 to high, divide by 2    
         print(len(path)/2)
+
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
+        area_map = [[*line] for line in lines]
+        for area in area_map:
+            print(area)
+        start_position = 0
+        for i in range(len(lines)):
+            line = lines[i]
+            if line.find("S") != -1:
+                start_position = (i,line.find("S"))
+
+        path = set()
+        visited = set()
+        queue = [start_position]
+        print("Start Post:", start_position)
+        while len(queue) > 0:
+            print("Current Queue:", queue)
+            cur_pos = queue.pop()
+            print("Current Position: ",cur_pos)
+            visited.add(cur_pos)
+            path.add(cur_pos)
+            new_positions = valid_positions(cur_pos, area_map)
+            print("New Positions: ",new_positions)
+            for new_pos in new_positions:
+                print("New pos:", new_pos)
+                if new_pos not in visited:
+                    queue.append(new_pos)
+            print()
+        print(len(path)/2)
+        for row in range(len(area_map)):
+            for column in range(len(area_map[0])):
+                print("Current Val:", (row,column))
+                # Left search 
+                left_ray = set([(row,n) for n in range(0, column, 1)])
+                right_ray = set([(row,n) for n in range(column+1, len(area_map[0]), 1)])
+                up_ray = set([(n,column) for n in range(0, row, 1)])
+                down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
+                print(left_ray)
+                print(right_ray)
+                print(up_ray),
+                print(down_ray)
+                print()
 
 if __name__ == "__main__":
     input_selection = args.input
