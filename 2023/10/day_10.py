@@ -149,26 +149,22 @@ def part2(filename):
                     up_to_down_inter = dict(collections.Counter(list(map(map_pos,path.intersection(up_to_down_ray)))))
 
                     print()
-                    if row == 3 and column == 14:
-                        print("YYYYYYYEEEEEHHHHHHHH")
-                        print("Point: ", (row,column))
-                    # print("Left Ita: ",left_inter)
-                    # print("Right Ita: ", right_inter)
-                    # print("Up ita: ", up_inter)
-                    # print("Down ita: ", down_inter)
-                        print("Left to right Ita:", left_to_right_inter)
+                    print("YYYYYYYEEEEEHHHHHHHH")
+                    print("Point: ", (row,column))
+                    print("Left to right Ita:", left_to_right_inter)
+                    print("Up to down Ita: ", up_to_down_inter)
+                    print("Corner counts: ", corner_count(left_to_right_inter)//2)
+                    left_to_right_count = 0
+                    left_to_right_count += corner_count(left_to_right_inter)//2
+                    if "|" in left_to_right_inter:
+                        left_to_right_count += left_to_right_inter["|"]
+                    up_to_down_count = 0
+                    up_to_down_count += corner_count(up_to_down_inter)//2
+                    if "-" in up_to_down_inter:
+                        up_to_down_count += up_to_down_inter["-"]
 
-                        print("Corner counts: ", corner_count(left_to_right_inter)//2)
-
-                    # right_inter = len(path.intersection(right_ray))
-                    # up_inter = len(path.intersection(up_ray))
-                    # down_inter = len(path.intersection(down_ray))
-
-                    if sum(left_inter.values()) % 2 and \
-                        sum(right_inter.values()) % 2 and \
-                        sum(up_inter.values()) % 2 and \
-                        sum(down_inter.values()) % 2:
-                        print(left_inter,right_inter,up_inter,down_inter)
+                    if left_to_right_count % 2 and \
+                        up_to_down_count % 2:
                         print("HiTTTTTTTTt val:", (row,column))
                         hits += 1
         print("Total hits: ",hits)
