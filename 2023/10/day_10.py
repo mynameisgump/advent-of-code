@@ -18,6 +18,13 @@ args = parser.parse_args();
 # Full Columns and Rows
 # Filter out | or - depending on the problem 
 # 
+corner_pair_val = {
+    ('F','J'): 1,
+    ('F','7'): 0,
+    ('L','J'): 0,
+    ('L','7'): 1,
+}
+
 def corner_count(freq_dict):
     count = 0
     for key, value in freq_dict.items():
@@ -73,6 +80,35 @@ def filter_straight(char):
     else:
         return False
 
+def map_corner_pair(pair):
+    return corner_pair_val[pair]
+
+def get_s_pipe_type(start_position, area_map):
+    starting_char = area_map[start_position[0]][start_position[1]]
+    if starting_char == "S":
+        valid_pos = []
+        adj_positions = get_pipe_pos(starting_char,start_position)
+        for adj_pos in adj_positions:
+            pos_char = area_map[adj_pos[0]][adj_pos[1]]
+            positions = get_pipe_pos(pos_char,adj_pos)
+            if start_position in positions:
+                valid_pos.append(adj_pos)
+        init = start_position
+        if (init[0]-1,init[1]) in valid_pos and (init[0]+1,init[1]):
+            return "|"
+        elif (init[0],init[1]-1) in valid_pos and (init[0],init[1]+1):
+            return "-"
+        elif (init[0]-1,init[1]) in valid_pos and (init[0]+1,init[1]):
+            return "|"
+        elif (init[0],init[1]+1) in valid_pos and (init[0],init[1]-1):
+            return "F"
+        elif (init[0]-1,init[1]) in valid_pos and (init[0],init[1]+1):
+            return "L"
+        elif (init[0],init[1]-1) in valid_pos and (init[0]+1,init[1]):
+            return "7"
+        elif (init[0],init[1]-1) in valid_pos and (init[0]-1,init[1]):
+            return "J"
+        
 def part1(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
@@ -130,6 +166,8 @@ def part2(filename):
             for new_pos in new_positions:
                 if new_pos not in visited:
                     queue.append(new_pos)
+        #path.add(start_position)
+        area_map[start_position[0]][start_position[1]] = get_s_pipe_type(start_position,area_map)
         hits = 0
         for row in range(len(area_map)):
             for column in range(len(area_map[0])):
@@ -155,10 +193,11 @@ def part2(filename):
                     l_to_r_inter = list(path.intersection(left_to_right_ray))
                     l_to_r_inter.sort(key = lambda x: x[1]) 
                     l_to_r_corner_chars = list(filter(filter_straight,list(map(map_pos,l_to_r_inter))))
+                    l_to_r_corner_pairs = [(l_to_r_corner_chars[i],l_to_r_corner_chars[i + 1]) for i in range(0, len(l_to_r_corner_chars), 2)]
                     #l_to_r_inter_chars = list(map(map_pos,l_to_r_inter))
                     #filtered_l_to_r_chars = list(filter(filter_straight,l_to_r_inter_chars))
                     print(row,column)
-                    print("Iter: ", filtered_l_to_r_chars)
+                    print("Iter: ", list(map(map_corner_pair,l_to_r_corner_pairs)))
                     
 
                     u_to_d_iter = list(map(map_pos,path.intersection(up_to_down_ray)))
