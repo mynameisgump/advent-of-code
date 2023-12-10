@@ -166,28 +166,15 @@ def part2(filename):
             for new_pos in new_positions:
                 if new_pos not in visited:
                     queue.append(new_pos)
-        #path.add(start_position)
+
         area_map[start_position[0]][start_position[1]] = get_s_pipe_type(start_position,area_map)
         hits = 0
         for row in range(len(area_map)):
             for column in range(len(area_map[0])):
                 #print("Current Val:", (row,column))
                 if (row,column) not in path:                
-                # Left search 
-                    # left_ray = set([(row,n) for n in range(0, column, 1)])
-                    # right_ray = set([(row,n) for n in range(column+1, len(area_map[0]), 1)])
-                    # up_ray = set([(n,column) for n in range(0, row, 1)])
-                    # down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
-
                     left_to_right_ray = set([(row,n) for n in range(0, len(area_map[0]), 1)])
                     left_to_right_ray.remove((row,column))
-                    up_to_down_ray = set([(n,column) for n in range(0, len(area_map), 1)]) 
-                    up_to_down_ray.remove((row,column))
-
-                    # left_inter = dict(collections.Counter(list(map(map_pos,path.intersection(left_ray)))))
-                    # right_inter = dict(collections.Counter(list(map(map_pos,path.intersection(right_ray)))))
-                    # up_inter = dict(collections.Counter(list(map(map_pos,path.intersection(up_ray)))))
-                    # down_inter = dict(collections.Counter(list(map(map_pos,path.intersection(down_ray)))))
 
                     l_to_r_count = 0
                     l_to_r_inter = list(path.intersection(left_to_right_ray))
@@ -197,17 +184,6 @@ def part2(filename):
                     l_to_r_pair_vals = sum(list(map(map_corner_pair,l_to_r_corner_pairs)))
                     l_to_r_freq = dict(collections.Counter(list(map(map_pos,path.intersection(left_to_right_ray)))))
 
-                    # u_to_d_count = 0
-                    # u_to_d_inter = list(path.intersection(up_to_down_ray))
-                    # u_to_d_inter.sort(key = lambda x: x[1]) 
-                    # u_to_d_corner_chars = list(filter(filter_straight,list(map(map_pos,u_to_d_inter))))
-                    # u_to_d_corner_pairs = [(u_to_d_corner_chars[i],u_to_d_corner_chars[i + 1]) for i in range(0, len(u_to_d_corner_chars), 2)]
-                    # u_to_d_pair_vals = list(map(map_corner_pair,u_to_d_corner_pairs))
-                    
-
-                    # u_to_d_iter = list(map(map_pos,path.intersection(up_to_down_ray)))
-
-                    # up_to_down_freq = dict(collections.Counter(list(map(map_pos,path.intersection(up_to_down_ray)))))
                     final_val = 0
                     final_val += l_to_r_pair_vals
                     if "|" in l_to_r_freq:
