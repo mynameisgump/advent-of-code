@@ -2,7 +2,7 @@ import argparse
 import re
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
-parser.add_argument("input", choices=["i1","ex1","ex2"])
+parser.add_argument("input", choices=["i1","ex1","ex2","ex3"])
 args = parser.parse_args();
 
 def get_pipe_pos(pipe_char,position):
@@ -83,6 +83,10 @@ def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
         area_map = [[*line] for line in lines]
+
+        def map_pos(pos):
+            return area_map[pos[0]][pos[1]]
+
         for area in area_map:
             print(area)
         start_position = 0
@@ -109,19 +113,30 @@ def part2(filename):
                     queue.append(new_pos)
             print()
         print(len(path)/2)
+        hits = 0
         for row in range(len(area_map)):
             for column in range(len(area_map[0])):
-                print("Current Val:", (row,column))
+                #print("Current Val:", (row,column))
+                if (row,column) not in path:                
                 # Left search 
-                left_ray = set([(row,n) for n in range(0, column, 1)])
-                right_ray = set([(row,n) for n in range(column+1, len(area_map[0]), 1)])
-                up_ray = set([(n,column) for n in range(0, row, 1)])
-                down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
-                print(left_ray)
-                print(right_ray)
-                print(up_ray),
-                print(down_ray)
-                print()
+                    left_ray = set([(row,n) for n in range(0, column, 1)])
+                    right_ray = set([(row,n) for n in range(column+1, len(area_map[0]), 1)])
+                    up_ray = set([(n,column) for n in range(0, row, 1)])
+                    down_ray = set([(n,column) for n in range(row+1, len(area_map), 1)])
+
+                    left_inter = list(map(map_pos,path.intersection(left_ray)))
+                    right_inter = len(path.intersection(right_ray))
+                    up_inter = len(path.intersection(up_ray))
+                    down_inter = len(path.intersection(down_ray))
+                    print("Left inter: ",left_inter)
+
+                    # if len(path.intersection(left_ray)) % 2 and \
+                    #     len(path.intersection(right_ray)) % 2 and \
+                    #     len(path.intersection(up_ray)) % 2 and \
+                    #     len(path.intersection(down_ray)) % 2:
+                    #     print("Hit val:", (row,column))
+                    #     hits += 1
+        print("Total hits: ",hits)
 
 if __name__ == "__main__":
     input_selection = args.input
@@ -134,6 +149,8 @@ if __name__ == "__main__":
             filename="example1.txt"
         case "ex2":
             filename="example2.txt"
+        case "ex3":
+            filename="example3.txt"
     match solution_selection:
         case "p1":
             part1(filename)
