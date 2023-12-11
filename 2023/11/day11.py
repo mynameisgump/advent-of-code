@@ -77,16 +77,24 @@ def part1(filename):
             print("Cur Galaxy:", cur_galaxy)
             distances[cur_galaxy] = []
             galaxy_2 = 1
-            for point_2 in points:                    
+            for point_2 in points:  
+                if point_1 != point_2:
+                    if frozenset([cur_galaxy,galaxy_2]) not in distance_pair:
+                        dis = 0
+                        for i in range(len(point_1)):
+                            dis += abs(point_1[i] - point_2[i])
+                        distance_pair[frozenset([cur_galaxy,galaxy_2])] = dis
                 if point_1 != point_2:
                     dis = 0
                     for i in range(len(point_1)):
                         dis += abs(point_1[i] - point_2[i])
                     print(galaxy_2,dis)
+
                     total+=dis
                     #distances[cur_galaxy] = distances[cur_galaxy]+[[galaxy_2,manhattan(point_1,point_2)]]
                 galaxy_2 += 1
             cur_galaxy += 1
+        print(sum(distance_pair.values()))
         #print(points)
         #print(distances)
         print(total)
