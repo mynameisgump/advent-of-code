@@ -9,7 +9,7 @@ args = parser.parse_args();
 # Recursion?
 # Check both sides of strings 
 # S = S[:Index] + S[Index + 1:]
-# @lru_cache(maxsize=None)
+# 
 def recursive_string_check_2(field,groups):
     if "?" in field:
         #print()
@@ -28,9 +28,15 @@ def recursive_string_check_2(field,groups):
     else:
         print(field)
 
+@lru_cache(maxsize=None)
 def recursive_string_check(field,groups):
     print(field,groups)
-    if len(field) > 1:
+    if len(field) == 0 or len(groups) == 0:
+        if len(field) == 0 and len(groups) == 0:
+            print("Empties")
+        
+
+    elif len(field) > 0:
         char = field[0]
         if char == ".":
             new_string = field[1:]
@@ -41,38 +47,63 @@ def recursive_string_check(field,groups):
             dot_string = "." + field[1:]
             recursive_string_check(dot_string, groups)
             recursive_string_check(hash_string, groups)
+
         elif char == "#":
-            new_i = 1
+            #print()
+            #print("Hashtag Check: ", field, groups)
             count = 1
-            counting = True 
-            while counting:
-                if new_i < len(field):
-                    new_char = field[new_i]
-                    if new_char == "#":
-                        count += 1
-                        new_i += 1
+            group = groups[0]
+            # ensure can index 
+            if len(field) >= group:
+
+                new_i = 1
+                counting = True 
+                valid = False
+
+                while counting:
+                    print(counting)
+                    if new_i < len(field):
+                        new_char = field[new_i]
+                        if count == group: 
+                            if new_char == "?" or new_char == ".":
+                                counting = False
+                                valid = True
+                            else:
+                                counting = False
+                        elif count > group:
+                            counting = False
+
+                        if new_char == "#":
+                            count += 1
+                            new_i += 1
+                        elif new_char == "?":
+                            count += 1
+                            new_i += 1
                     else:
+                        if count == group: 
+                            valid = True
                         counting = False
-                else:
-                    counting = False
-            if count == groups[0]:
-                recursive_string_check(field[count:],groups[1:])
+                #print(valid)
+                if valid:
+                     recursive_string_check(field[count:],groups[1:])
+            #print()
             # print()
             # print(field)
             # print(count)
             # print(new_i)
             # print(field[count:])
             #print("Counted:",field,count)
-    else:
-        print(groups)
         
             
 
 def part1(filename):
     with open(filename) as f:
         records = [[item.split(" ")[0],tuple([int(num) for num in item.split(" ")[1].split(",")])]for item in f.read().split("\n")];
+        count = 0 
         for record in records:
-            recursive_string_check_2(record[0],record[1])
+            print()
+            print("New Record: ")
+            recursive_string_check(record[0],record[1])
 
 def part2(filename):
     with open(filename) as f:
