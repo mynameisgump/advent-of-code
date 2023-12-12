@@ -32,13 +32,13 @@ args = parser.parse_args();
 
 @lru_cache(maxsize=None)
 def recursive_string_check(field,groups,prev,total):
-    print("|"*prev,field,groups,prev)
+    #print("|"*prev,field,groups,prev)
     new_total = 0
     if len(field) == 0 or len(groups) == 0:
         field = field.replace(".","")
         field = field.replace("?","")
         if field.count("#") == 0 and len(groups) == 0:
-            print(field,groups)
+            #print(field,groups)
             new_total += 1
     elif len(field) > 0:
         #print("Checking Char of field")
@@ -98,6 +98,7 @@ def part1_testing():
         for record in records:
             print()
             print("New Record: ")
+
             total = recursive_string_check(record[0],record[1],0,0)
             assert total == record[2]
             count += total
@@ -114,7 +115,17 @@ def part1(filename):
 
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        records = [[item.split(" ")[0],tuple([int(num) for num in item.split(" ")[1].split(",")])]for item in f.read().split("\n")];
+        count = 0 
+        for record in records:
+            new_field = (record[0]+"?")*4+record[0]
+            new_items = record[1]*5
+            print(new_field)
+            print(new_items)
+            total = recursive_string_check(new_field,new_items,0,0)
+            count += total
+        print(count)
+
 
 if __name__ == "__main__":
     input_selection = args.input
