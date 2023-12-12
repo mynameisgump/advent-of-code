@@ -28,6 +28,8 @@ args = parser.parse_args();
 #     else:
 #         print(field)
 
+# Attempt 1 too high: 9612
+
 @lru_cache(maxsize=None)
 def recursive_string_check(field,groups,prev,total):
     print("|"*prev,field,groups,prev)
@@ -52,12 +54,8 @@ def recursive_string_check(field,groups,prev,total):
             new_total += recursive_string_check(dot_string, groups,prev+1,total)
             
         elif char == "#":
-            #print("Hash")
-            #print()
-            #print("Hashtag Check: ", field, groups)
             count = 1
             group = groups[0]
-            # ensure can index 
             if len(field) >= group:
 
                 new_i = 1
@@ -77,6 +75,8 @@ def recursive_string_check(field,groups,prev,total):
                         count += 1
                     elif new_char == "?":
                         count += 1
+                    elif new_char == ".":
+                        break
                     new_i += 1
                 if count == group: 
                     valid = True
@@ -99,16 +99,18 @@ def part1_testing():
             print()
             print("New Record: ")
             total = recursive_string_check(record[0],record[1],0,0)
-            print("Final total",total)
+            assert total == record[2]
+            count += total
+        print("Final Sum: ", count)            
 
 def part1(filename):
     with open(filename) as f:
         records = [[item.split(" ")[0],tuple([int(num) for num in item.split(" ")[1].split(",")])]for item in f.read().split("\n")];
         count = 0 
         for record in records:
-            print()
-            print("New Record: ")
-            recursive_string_check(record[0],record[1],0,0)
+            total = recursive_string_check(record[0],record[1],0,0)
+            count += total
+        print(count)
 
 def part2(filename):
     with open(filename) as f:
