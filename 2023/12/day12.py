@@ -9,23 +9,23 @@ args = parser.parse_args();
 # Check both sides of strings 
 # S = S[:Index] + S[Index + 1:]
 def recursive_string_check(field,groups):
-    print(field)
-    for i in range(len(field)):
-        char = field[i]
+    print(field,groups)
+    if len(field) > 1:
+        char = field[0]
         if char == ".":
-            new_string = field[:i] + field[i + 1:]
-            # Remove check 
-            #print(new_string)
-
-        if char == "?":
-            hash_string = field[:i] + "#" + field[i + 1:]
-            dot_string = field[:i] + "." + field[i + 1:]
+            new_string = field[1:]
+            recursive_string_check(new_string,groups)
+        elif char == "?":
+            
+            hash_string = "#" + field[1:]
+            dot_string = "." + field[1:]
+            #print()
+            #print(field)
+            #print(hash_string,dot_string)
             recursive_string_check(dot_string, groups)
             recursive_string_check(hash_string, groups)
-            #recursive_string_check(field)
-        if char == "#":
-            print("Boutta Count:")
-            new_i = i+1
+        elif char == "#":
+            new_i = 1
             count = 1
             counting = True 
             while counting:
@@ -38,8 +38,17 @@ def recursive_string_check(field,groups):
                         counting = False
                 else:
                     counting = False
-           
-            print("Counted:",field,count)
+            if count == groups[0]:
+                recursive_string_check(field[count:],groups[1:])
+            # print()
+            # print(field)
+            # print(count)
+            # print(new_i)
+            # print(field[count:])
+            #print("Counted:",field,count)
+    else:
+        print(groups)
+        
             
 
 def part1(filename):
