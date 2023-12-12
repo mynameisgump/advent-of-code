@@ -10,30 +10,33 @@ args = parser.parse_args();
 # Check both sides of strings 
 # S = S[:Index] + S[Index + 1:]
 # 
-def recursive_string_check_2(field,groups):
-    if "?" in field:
-        #print()
-        #print(field)
-        for i in range(len(field)):
-            char = field[i]
-            if char == "?":
-                hash_string = field[:i]+ "#" + field[i+1:]
-                dot_string = field[:i]+ "." + field[i+1:]
-                if hash_string.count("#") <= sum(groups):
-                    recursive_string_check_2(hash_string, groups)
+# def recursive_string_check_2(field,groups):
+#     if "?" in field:
+#         #print()
+#         #print(field)
+#         for i in range(len(field)):
+#             char = field[i]
+#             if char == "?":
+#                 hash_string = field[:i]+ "#" + field[i+1:]
+#                 dot_string = field[:i]+ "." + field[i+1:]
+#                 if hash_string.count("#") <= sum(groups):
+#                     recursive_string_check_2(hash_string, groups)
 
-                recursive_string_check_2(dot_string, groups)
-                #print(hash_string)
-                #print(dot_string)
-    else:
-        print(field)
+#                 recursive_string_check_2(dot_string, groups)
+#                 #print(hash_string)
+#                 #print(dot_string)
+#     else:
+#         print(field)
 
 @lru_cache(maxsize=None)
 def recursive_string_check(field,groups):
     print(field,groups)
     if len(field) == 0 or len(groups) == 0:
+        field = field.replace(".","")
+        field = field.replace("?","")
         if len(field) == 0 and len(groups) == 0:
             print("Empties")
+
         
 
     elif len(field) > 0:
@@ -45,8 +48,9 @@ def recursive_string_check(field,groups):
             
             hash_string = "#" + field[1:]
             dot_string = "." + field[1:]
-            recursive_string_check(dot_string, groups)
             recursive_string_check(hash_string, groups)
+            recursive_string_check(dot_string, groups)
+            
 
         elif char == "#":
             #print()
@@ -60,29 +64,22 @@ def recursive_string_check(field,groups):
                 counting = True 
                 valid = False
 
-                while counting:
-                    print(counting)
-                    if new_i < len(field):
-                        new_char = field[new_i]
-                        if count == group: 
-                            if new_char == "?" or new_char == ".":
-                                counting = False
-                                valid = True
-                            else:
-                                counting = False
-                        elif count > group:
-                            counting = False
-
-                        if new_char == "#":
-                            count += 1
-                            new_i += 1
-                        elif new_char == "?":
-                            count += 1
-                            new_i += 1
-                    else:
-                        if count == group: 
+                while new_i < len(field):
+                    new_char = field[new_i]
+                    if count > group:
+                        break
+                    if count == group: 
+                        if new_char == "?" or new_char == ".":
                             valid = True
-                        counting = False
+                            break
+
+                    if new_char == "#":
+                        count += 1
+                    elif new_char == "?":
+                        count += 1
+                    new_i += 1
+                if count == group: 
+                    valid = True
                 #print(valid)
                 if valid:
                      recursive_string_check(field[count:],groups[1:])
