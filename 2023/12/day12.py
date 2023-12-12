@@ -1,5 +1,6 @@
 import argparse
 import re
+from functools import lru_cache
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
@@ -8,6 +9,25 @@ args = parser.parse_args();
 # Recursion?
 # Check both sides of strings 
 # S = S[:Index] + S[Index + 1:]
+# @lru_cache(maxsize=None)
+def recursive_string_check_2(field,groups):
+    if "?" in field:
+        #print()
+        #print(field)
+        for i in range(len(field)):
+            char = field[i]
+            if char == "?":
+                hash_string = field[:i]+ "#" + field[i+1:]
+                dot_string = field[:i]+ "." + field[i+1:]
+                if hash_string.count("#") <= sum(groups):
+                    recursive_string_check_2(hash_string, groups)
+
+                recursive_string_check_2(dot_string, groups)
+                #print(hash_string)
+                #print(dot_string)
+    else:
+        print(field)
+
 def recursive_string_check(field,groups):
     print(field,groups)
     if len(field) > 1:
@@ -19,9 +39,6 @@ def recursive_string_check(field,groups):
             
             hash_string = "#" + field[1:]
             dot_string = "." + field[1:]
-            #print()
-            #print(field)
-            #print(hash_string,dot_string)
             recursive_string_check(dot_string, groups)
             recursive_string_check(hash_string, groups)
         elif char == "#":
@@ -53,9 +70,10 @@ def recursive_string_check(field,groups):
 
 def part1(filename):
     with open(filename) as f:
-        records = [[item.split(" ")[0],[int(num) for num in item.split(" ")[1].split(",")]]for item in f.read().split("\n")];
+        records = [[item.split(" ")[0],tuple([int(num) for num in item.split(" ")[1].split(",")])]for item in f.read().split("\n")];
         for record in records:
-            recursive_string_check(record[0],record[1])
+            recursive_string_check_2(record[0],record[1])
+
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
