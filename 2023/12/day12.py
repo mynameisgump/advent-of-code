@@ -2,7 +2,7 @@ import argparse
 import re
 from functools import lru_cache
 parser = argparse.ArgumentParser()
-parser.add_argument("solution", choices=["p1","p2"])
+parser.add_argument("solution", choices=["p1","p2","p1t"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
@@ -29,30 +29,30 @@ args = parser.parse_args();
 #         print(field)
 
 @lru_cache(maxsize=None)
-def recursive_string_check(field,groups):
-    print(field,groups)
+def recursive_string_check(field,groups,prev,total):
+    print("|"*prev,field,groups,prev)
+    new_total = 0
     if len(field) == 0 or len(groups) == 0:
         field = field.replace(".","")
         field = field.replace("?","")
-        if len(field) == 0 and len(groups) == 0:
-            print("Empties")
-
-        
-
+        if field.count("#") == 0 and len(groups) == 0:
+            print(field,groups)
+            new_total += 1
     elif len(field) > 0:
+        #print("Checking Char of field")
         char = field[0]
         if char == ".":
             new_string = field[1:]
-            recursive_string_check(new_string,groups)
+            new_total += recursive_string_check(new_string,groups,prev+1,total)
         elif char == "?":
             
             hash_string = "#" + field[1:]
             dot_string = "." + field[1:]
-            recursive_string_check(hash_string, groups)
-            recursive_string_check(dot_string, groups)
+            new_total += recursive_string_check(hash_string, groups,prev+1,total)
+            new_total += recursive_string_check(dot_string, groups,prev+1,total)
             
-
         elif char == "#":
+            #print("Hash")
             #print()
             #print("Hashtag Check: ", field, groups)
             count = 1
@@ -82,7 +82,7 @@ def recursive_string_check(field,groups):
                     valid = True
                 #print(valid)
                 if valid:
-                     recursive_string_check(field[count:],groups[1:])
+                    new_total += recursive_string_check(field[count+1:],groups[1:],prev+1,total)
             #print()
             # print()
             # print(field)
@@ -90,8 +90,16 @@ def recursive_string_check(field,groups):
             # print(new_i)
             # print(field[count:])
             #print("Counted:",field,count)
-        
-            
+    return new_total
+def part1_testing():
+    with open("test.txt") as f:
+        records = [[item.split(" ")[0],tuple([int(num) for num in item.split(" ")[1].split(",")]),int(item.split(" ")[2])]for item in f.read().split("\n")];
+        count = 0 
+        for record in records:
+            print()
+            print("New Record: ")
+            total = recursive_string_check(record[0],record[1],0,0)
+            print("Final total",total)
 
 def part1(filename):
     with open(filename) as f:
@@ -100,7 +108,7 @@ def part1(filename):
         for record in records:
             print()
             print("New Record: ")
-            recursive_string_check(record[0],record[1])
+            recursive_string_check(record[0],record[1],0,0)
 
 def part2(filename):
     with open(filename) as f:
@@ -120,3 +128,5 @@ if __name__ == "__main__":
             part1(filename)
         case "p2":
             part2(filename)
+        case "p1t":
+            part1_testing()
