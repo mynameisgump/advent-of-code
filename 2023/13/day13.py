@@ -10,6 +10,7 @@ def part1(filename):
     with open(filename) as f:
         lines = [line.split("\n") for line in f.read().split("\n\n")];
         for mirror in lines:
+            print()
             print(mirror)
 
             columns = []
@@ -22,15 +23,19 @@ def part1(filename):
             row_hit = False
             r_duplicates = [item for item, count in collections.Counter(mirror).items() if count > 1]
             r_indices = [i for i in range(len(mirror)) if mirror[i] in r_duplicates]
-            if r_indices[-1] == len(mirror[0]) or r_indices[0] == 0:
+            print("R Dups: ",r_duplicates)
+            print("R Inda: ",r_indices)
+            if r_indices[-1] == len(mirror)-1 or r_indices[0] == 0:
+                print("Row Hit")
                 hit = True
 
             c_duplicates = [item for item, count in collections.Counter(columns).items() if count > 1]
-            c_indices = [i for i in range(len(mirror)) if columns[i] in c_duplicates]
+            c_indices = [i for i in range(len(columns)) if columns[i] in c_duplicates]
             
-            print(c_duplicates)
-            print(c_indices)
-            if c_indices[-1] == len(columns[0]) or c_indices[0] == 0:
+            print("C Dup: ",c_duplicates)
+            print("C inda: ",c_indices)
+            if c_indices[-1] == len(columns)-1 or c_indices[0] == 0:
+                print("Column Hit")
                 hit = True
             # for item in duplicates:
             #     indices = [i for i in range(len(mirror)) if mirror[i] == item]
