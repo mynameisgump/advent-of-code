@@ -24,13 +24,76 @@ def part1(filename):
             for i in range(len(mirror[0])):
                 cur_column = ""
                 for row in mirror:
-
                     cur_column += row[i]
                 columns.append(cur_column)
-            #print(columns)
-            row_hit = False
-            r_duplicates = [item for item, count in collections.Counter(mirror).items() if count > 1]
+            rows = mirror.copy()
+
+            #print("Rows: ", rows)
+            #print("Columns: ", columns)
+            # mirrored_rows = []
+            # while len(rows) > 0:
+            #     front_ele = rows.pop(0)
+            #     mirrored_rows.insert(0,front_ele)
+            #     if len(rows) > 0:
+            #         print()
+            #         print(rows)
+            #         print(mirrored_rows)
+            #         print("Rows as subset", all(x in mirrored_rows for x in rows))
+            #         print("Mirrored as subset",all(x in rows for x in mirrored_rows))
             
+            col_index = 0
+            mirrored_cols = []
+            while len(columns) > 0:
+                front_ele = columns.pop(0)
+                mirrored_cols.insert(0,front_ele)
+                if len(columns) > 0:
+                    #print(all(x in columns for x in mirrored_cols))
+                    
+                    if all(x == y for x, y in zip(columns, mirrored_cols)):
+                        col_index = len(mirrored_cols)
+                        break 
+                    
+
+                    # if (all(x in mirrored_cols for x in columns)):
+                    #     print()
+                    #     print(columns)
+                    #     print(mirrored_cols)
+                    #     print("Cols as subset", all(x in mirrored_cols for x in columns))
+                    #     print("Mirrored as subset",all(x in columns for x in mirrored_cols))
+                    #     [print(len(mirrored_cols))]
+                    #     col_index = len(mirrored_cols)
+                    #     break
+            print("Col Index: ", col_index)
+            row_index = 0
+            mirrored_rows = []
+            while len(rows) > 0:
+                front_ele = rows.pop(0)
+                mirrored_rows.insert(0,front_ele)
+                if len(rows) > 0:
+                    
+                    if (all(x in mirrored_rows for x in rows)):
+                        row_index = len(mirrored_rows)
+                        break 
+            print("Row Index: ",row_index)
+                        # print()
+                        # print(rows)
+                        # print(mirrored_rows)
+                        # print("Rows as subset", all(x in mirrored_rows for x in rows))
+                        # print("Mirrored Rows as subset",all(x in rows for x in mirrored_rows))
+                        # [print(len(mirrored_rows))]
+                
+                
+            #print(columns)
+            # row_hit = False
+            # r_duplicates = [item for item, count in collections.Counter(mirror).items() if count > 1]
+
+            # rows = mirror.copy()
+            # while not perfect:
+            #     count = collections.Counter(rows)
+            #     print(count)
+
+            # print(r_duplicates)
+            # collections.Counter()
 
             # r_indices = [i for i in range(len(mirror)) if mirror[i] in r_duplicates]
             # if len(r_duplicates) > 1:
@@ -40,19 +103,19 @@ def part1(filename):
             #         print("Row Split:", r_indices[len(r_indices)//2])
 
             c_duplicates = [item for item, count in collections.Counter(columns).items() if count > 1]
-            print("Counts:",collections.Counter(columns))
+            #print("Counts:",collections.Counter(columns))
             c_indices = [i for i in range(len(columns)) if columns[i] in c_duplicates]
             
             if len(c_duplicates) > 1:
                 if c_indices[-1] == len(columns)-1 or c_indices[0] == 0:
-                    print(c_duplicates,c_indices)
+                    #print(c_duplicates,c_indices)
                     total += c_indices[len(c_indices)//2]
-                    print("Column Split:", c_indices[len(c_indices)//2])
+                    #print("Column Split:", c_indices[len(c_indices)//2])
 
        
 
-        print(h_indices,v_indices)
-        print(total)
+        #print(h_indices,v_indices)
+        #print(total)
         #print(lines)
 def part2(filename):
     with open(filename) as f:
