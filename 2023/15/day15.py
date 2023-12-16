@@ -16,7 +16,6 @@ def hash_string(string):
 def part1(filename):
     with open(filename) as f:
         lines = f.read().split("\n")[0].split(",");
-        print(lines)
         total = 0 
         for string in lines:
             total += hash_string(string)
@@ -24,7 +23,20 @@ def part1(filename):
 
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        lines = f.read().split("\n")[0].split(",");
+        total = 0 
+        hashmap = {k: {} for k in range(256)}
+        for string in lines:
+            if "=" in string:
+                [label, focal_length] = string.split("=")
+                print(label,focal_length)
+                box_num = hash_string(label)
+                hashmap[box_num][label] = focal_length
+                pass
+            elif "-" in string:
+                pass
+            total += hash_string(string)
+        print(total)
 
 if __name__ == "__main__":
     input_selection = args.input
