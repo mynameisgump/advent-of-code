@@ -21,24 +21,24 @@ def part1(filename):
             for row in rows:
                 cur_column.append(row[i])
             columns.append(cur_column)
-        print_matrix(rows)
-        print()
-        print_matrix(columns)
+        #print_matrix(rows)
+        #print()
+        #print_matrix(columns)
         for col in range(len(rows[0])):
-            print()
-            print("Processing Column: ", columns[col])
+            #print()
+            #print("Processing Column: ", columns[col])
             cur_collisions = []
             hit_empty = False
             for row in range(len(rows)):
                 char = rows[row][col]
-                print(char)
+                #print(char)
                 match char:
                     case "O":
                         if not hit_empty:
                             cur_collisions.append("#")
                         else:
-                            print("ZZZZZ")
-                            print(cur_collisions)            
+                            #print("ZZZZZ")
+                            #print(cur_collisions)            
                             empty = True 
                             dist = len(cur_collisions)-1
                             final_index = len(cur_collisions)-1
@@ -49,12 +49,12 @@ def part1(filename):
                                 if comp_char == "#":
                                     break
                                 dist -= 1
-                            print("Final Index: ",final_index)
-                            print_matrix(rows)
+                            #print("Final Index: ",final_index)
+                            #print_matrix(rows)
                             rows[final_index][col] = "O"
                             rows[row][col] = "."
-                            print()
-                            print_matrix(rows)
+                            #print()
+                            #print_matrix(rows)
                             cur_collisions[final_index] = "#"
                             cur_collisions.append(".")
                     case ".":
@@ -63,8 +63,17 @@ def part1(filename):
                     case "#":
                         hit_empty = False
                         cur_collisions.append("#")
-                print(cur_collisions)
-
+                #print(cur_collisions)
+        print("Rows: ")
+        print_matrix(rows)
+        total = 0
+        row_load = len(rows)
+        for row in rows:
+            print(row.count("O"))
+            total += row.count("O") * row_load
+            row_load -= 1
+        print(total)
+            
         #print(lines)
 
 def part2(filename):
