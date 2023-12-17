@@ -7,8 +7,11 @@ parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
+rows_answers = {}
+rows_cycles = {}
 @cache
-def cycle(rows):
+def cycle(rows_tuple):
+    rows = list(list(sub) for sub in rows_tuple)
     for i in range(4):
         for col in range(len(rows[0])):
             cur_collisions = []
@@ -40,9 +43,10 @@ def cycle(rows):
                         hit_empty = False
                         cur_collisions.append("#")
         rows = [list(row) for row in zip(*rows[::-1])]
-    return rows  
+    return tuple(tuple(sub) for sub in rows)  
 
 def print_matrix(matrix):
+    print()
     for row in matrix:
         print("".join(row))
 # 112773
@@ -97,6 +101,7 @@ def part1(filename):
             
         #print(lines)
 
+
 def part2(filename):
     with open(filename) as f:
         rows = [[*row] for row in f.read().split("\n")];
@@ -104,9 +109,18 @@ def part2(filename):
         # rows = cycle(rows)
         # print()
         # print_matrix(rows)
-        for z in range(1000000000):
-            print(z)
+        rows = tuple(tuple(sub) for sub in rows);
+        for z in range(1000):
+            
             rows = cycle(rows)
+            #print_matrix(rows)
+            total = 0
+            row_load = len(rows)
+            for row in rows:
+                total += row.count("O") * row_load
+                row_load -= 1
+            print(z, total)
+        
         #     for i in range(4):
         #         for col in range(len(rows[0])):
         #             cur_collisions = []
@@ -150,7 +164,7 @@ def part2(filename):
         #         row_load -= 1
         #     print(z, total)
 
-        #print_matrix(rows)98893
+        #print_matrix(rows)98893m98894
         
         #print(total)
             
