@@ -7,7 +7,6 @@ parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
 def reconstruct_path(came_from, current):
-    #print(current)
     total_path = [came_from[current]]
     while current in came_from:
         current = came_from[current][0]
@@ -22,8 +21,8 @@ def get_neighbors(node,lava_map,came_from):
     [position, direction] = node
     positions = []
 
+    
     if len(came_from) > 3:
-        #print(came_from)
         dir_1 = node[1]
         node_2 = came_from[node[0]]
         dir_2 = node_2[1]
@@ -31,48 +30,52 @@ def get_neighbors(node,lava_map,came_from):
         dir_3 = node_3[1]
         node_4 = came_from[node_3[0]]
         dir_4 = node_4[1]
-        print(dir_1,dir_2,dir_3,dir_4)
         if dir_1 == dir_2 == dir_3 == dir_4:
             if direction == "U" or direction == "D":
-                if position[1]-1 > 0:
+                if position[1]-1 >= 0:
                     positions.append(((position[0],position[1]-1),"L"))
-
                 if position[1]+1 < len(lava_map):
                     positions.append(((position[0],position[1]+1),"R"))
+
             if direction == "L" or direction == "R":
-                if position[0]-1 > 0:
+                if position[0]-1 >= 0:
                     positions.append(((position[0]-1,position[1]),"U"))
 
                 if position[0]+1 < len(lava_map):
                     positions.append(((position[0]+1,position[1]),"D"))
         else:
-            if position[0]-1 > 0 and direction != "D":
+            if position[0]-1 >= 0 and direction != "D":
                 positions.append(((position[0]-1,position[1]),"U"))
 
             if position[0]+1 < len(lava_map) and direction != "U":
                 positions.append(((position[0]+1,position[1]),"D"))
 
-            if position[1]-1 > 0 and direction != "R":
+            if position[1]-1 >= 0 and direction != "R":
                 positions.append(((position[0],position[1]-1),"L"))
 
             if position[1]+1 < len(lava_map) and direction != "L":
                 positions.append(((position[0],position[1]+1),"R"))
 
     else:
-        if position[0]-1 > 0 and direction != "D":
+        if position[0]-1 >= 0 and direction != "D":
             positions.append(((position[0]-1,position[1]),"U"))
 
         if position[0]+1 < len(lava_map) and direction != "U":
             positions.append(((position[0]+1,position[1]),"D"))
 
-        if position[1]-1 > 0 and direction != "R":
+        if position[1]-1 >= 0 and direction != "R":
             positions.append(((position[0],position[1]-1),"L"))
 
         if position[1]+1 < len(lava_map) and direction != "L":
             positions.append(((position[0],position[1]+1),"R"))
+    if position == (7,1):
+        print("POSITION INFO", direction)
+        print(position)
+        print(positions)
+    
     return positions
 
-def h(node_1,goal,came_from):
+def h(node_1,goal):
     start = node_1[0]
     return abs(start[0]-goal[0])+abs(start[1]-goal[1])
 
@@ -99,7 +102,6 @@ def astar(start,stop,lava_map):
         [score, current] = heapq.heappop(open_nodes)
         #print(open_nodes)
         if current == stop:
-            print("Score: ",score)
             return reconstruct_path(came_from, current)
         neighbors = get_neighbors((current,came_from[current][1]),lava_map,came_from)
 
@@ -110,8 +112,8 @@ def astar(start,stop,lava_map):
                 #print("Addin")
                 came_from[neighbor] = (current,direction)
                 g_score[neighbor] = tentative_gScore
-                f_score[neighbor] = tentative_gScore + h((neighbor,direction),stop,came_from)
-                if neighbor not in open_nodes:
+                f_score[neighbor] = tentative_gScore # + h((neighbor,direction),stop)
+                if (f_score[neighbor],neighbor) not in open_nodes:
                     heapq.heappush(open_nodes,(f_score[neighbor],neighbor))
         cur_it += 1
     # float inf
