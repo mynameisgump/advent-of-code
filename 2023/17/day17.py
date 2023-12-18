@@ -21,31 +21,59 @@ def reconstruct_path(came_from, current):
 def get_neighbors(node,lava_map,came_from):
     [position, direction] = node
     positions = []
-    if position[0]-1 > 0 and direction != "D":
-        positions.append(((position[0]-1,position[1]),"U"))
 
-    if position[0]+1 < len(lava_map) and direction != "U":
-        positions.append(((position[0]+1,position[1]),"D"))
-
-    if position[1]-1 > 0 and direction != "R":
-        positions.append(((position[0],position[1]-1),"L"))
-
-    if position[1]+1 < len(lava_map) and direction != "L":
-        positions.append(((position[0],position[1]+1),"R"))
-    return positions
-
-def h(node_1,goal,came_from):
-    start = node_1[0]
-    if len(came_from) > 5:
-        dir_1 = node_1[1]
-        node_2 = came_from[node_1[0]]
+    if len(came_from) > 3:
+        #print(came_from)
+        dir_1 = node[1]
+        node_2 = came_from[node[0]]
         dir_2 = node_2[1]
         node_3 = came_from[node_2[0]]
         dir_3 = node_3[1]
         node_4 = came_from[node_3[0]]
         dir_4 = node_4[1]
+        print(dir_1,dir_2,dir_3,dir_4)
         if dir_1 == dir_2 == dir_3 == dir_4:
-            return float('inf')
+            if direction == "U" or direction == "D":
+                if position[1]-1 > 0:
+                    positions.append(((position[0],position[1]-1),"L"))
+
+                if position[1]+1 < len(lava_map):
+                    positions.append(((position[0],position[1]+1),"R"))
+            if direction == "L" or direction == "R":
+                if position[0]-1 > 0:
+                    positions.append(((position[0]-1,position[1]),"U"))
+
+                if position[0]+1 < len(lava_map):
+                    positions.append(((position[0]+1,position[1]),"D"))
+        else:
+            if position[0]-1 > 0 and direction != "D":
+                positions.append(((position[0]-1,position[1]),"U"))
+
+            if position[0]+1 < len(lava_map) and direction != "U":
+                positions.append(((position[0]+1,position[1]),"D"))
+
+            if position[1]-1 > 0 and direction != "R":
+                positions.append(((position[0],position[1]-1),"L"))
+
+            if position[1]+1 < len(lava_map) and direction != "L":
+                positions.append(((position[0],position[1]+1),"R"))
+
+    else:
+        if position[0]-1 > 0 and direction != "D":
+            positions.append(((position[0]-1,position[1]),"U"))
+
+        if position[0]+1 < len(lava_map) and direction != "U":
+            positions.append(((position[0]+1,position[1]),"D"))
+
+        if position[1]-1 > 0 and direction != "R":
+            positions.append(((position[0],position[1]-1),"L"))
+
+        if position[1]+1 < len(lava_map) and direction != "L":
+            positions.append(((position[0],position[1]+1),"R"))
+    return positions
+
+def h(node_1,goal,came_from):
+    start = node_1[0]
     return abs(start[0]-goal[0])+abs(start[1]-goal[1])
 
 def astar(start,stop,lava_map):
@@ -73,7 +101,7 @@ def astar(start,stop,lava_map):
         if current == stop:
             print("Score: ",score)
             return reconstruct_path(came_from, current)
-        neighbors = get_neighbors((current,"S"),lava_map)
+        neighbors = get_neighbors((current,came_from[current][1]),lava_map,came_from)
 
         for neighbor,direction in neighbors:
             tentative_gScore = g_score[current] + lava_map[neighbor[0]][neighbor[1]]
