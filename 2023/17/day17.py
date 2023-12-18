@@ -7,42 +7,51 @@ parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
 def reconstruct_path(came_from, current):
-    print(current)
-    total_path = [current]
+    #print(current)
+    total_path = [came_from[current]]
     while current in came_from:
         current = came_from[current][0]
-        total_path.append(current)
+        total_path.append(came_from[current])
+        if current == (0,0):
+            break
+    print("Reconstructed path")
     return total_path
 
 
-def get_neighbors(node,lava_map):
+def get_neighbors(node,lava_map,came_from):
     [position, direction] = node
     positions = []
-    if position[0]-1 > 0:
+    if position[0]-1 > 0 and direction != "D":
         positions.append(((position[0]-1,position[1]),"U"))
-    if position[0]+1 < len(lava_map):
+
+    if position[0]+1 < len(lava_map) and direction != "U":
         positions.append(((position[0]+1,position[1]),"D"))
-    if position[1]-1 > 0:
+
+    if position[1]-1 > 0 and direction != "R":
         positions.append(((position[0],position[1]-1),"L"))
-    if position[1]+1 < len(lava_map):
+
+    if position[1]+1 < len(lava_map) and direction != "L":
         positions.append(((position[0],position[1]+1),"R"))
     return positions
 
-def h(node_1,came_from):
-    if len(came_from) > 3:
+def h(node_1,goal,came_from):
+    start = node_1[0]
+    if len(came_from) > 5:
         dir_1 = node_1[1]
         node_2 = came_from[node_1[0]]
         dir_2 = node_2[1]
         node_3 = came_from[node_2[0]]
         dir_3 = node_3[1]
-        if dir_1 == dir_2 == dir_3:
+        node_4 = came_from[node_3[0]]
+        dir_4 = node_4[1]
+        if dir_1 == dir_2 == dir_3 == dir_4:
             return float('inf')
-    return 0
+    return abs(start[0]-goal[0])+abs(start[1]-goal[1])
 
 def astar(start,stop,lava_map):
-    print()
+    #print()
     all_nodes = []
-    came_from = {}
+    came_from = {(0,0): ((0,0),"S")}
     g_score = {}
     f_score = {}
     for y in range(len(lava_map)):
@@ -51,7 +60,7 @@ def astar(start,stop,lava_map):
             g_score[(y,x)] = float('inf')
             f_score[(y,x)] = float('inf')
     g_score[start] = 0
-    f_score[start] = lava_map[0][0]
+    f_score[start] = 0
     open_nodes = []
     heapq.heappush(open_nodes,(f_score[start],start))
     
@@ -60,8 +69,9 @@ def astar(start,stop,lava_map):
     while len(open_nodes) > 0:
     #while cur_it < 5:
         [score, current] = heapq.heappop(open_nodes)
-        print(open_nodes)
+        #print(open_nodes)
         if current == stop:
+            print("Score: ",score)
             return reconstruct_path(came_from, current)
         neighbors = get_neighbors((current,"S"),lava_map)
 
@@ -72,7 +82,7 @@ def astar(start,stop,lava_map):
                 #print("Addin")
                 came_from[neighbor] = (current,direction)
                 g_score[neighbor] = tentative_gScore
-                f_score[neighbor] = tentative_gScore + h((neighbor,direction),came_from)
+                f_score[neighbor] = tentative_gScore + h((neighbor,direction),stop,came_from)
                 if neighbor not in open_nodes:
                     heapq.heappush(open_nodes,(f_score[neighbor],neighbor))
         cur_it += 1
@@ -97,7 +107,19 @@ def part1(filename):
 
         path = astar((0,0),(len(lava_map)-1,len(lava_map[0])-1),lava_map)
         for node in path:
-            lava_map[node[0]][node[1]] = "#"
+            char = ""
+            match node[1]:
+                case "R":
+                    char = ">"
+                case "L":
+                    char = "<"
+                case "U":
+                    char = "^"
+                case "D":
+                    char = "v"
+                case "S":
+                    char = "S"
+            lava_map[node[0][0]][node[0][1]] = char
         for row in lava_map:
             print("".join(str(num) for num in row))
         #print(lava_map)

@@ -62,20 +62,13 @@ def aStar(start, goal, grid):
         
         neighbors = getNeighbors(grid,curNode)
         for neighbor in neighbors:
-            #print("Neighbor:")
-            #print(neighbor)
             tentgScore = gScore[curNode]+int(grid[neighbor[0]][neighbor[1]])
-            #print(tentgScore)
             if tentgScore < gScore[neighbor]:
                 cameFrom[neighbor] = curNode
                 gScore[neighbor] = tentgScore
                 fScore[neighbor] = tentgScore + h(neighbor,goal)
                 if neighbor not in openSet:
                     heapq.heappush(openSet,neighbor)
-                #gScore[neighbor] := tentative_gScore
-                #fScore[neighbor] := tentative_gScore + h(neighbor)
-                #if neighbor not in openSet
-                #    openSet.add(neighbor)
 
 if __name__ == "__main__":
     filename="input.txt"
