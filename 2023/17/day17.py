@@ -68,9 +68,13 @@ def get_neighbors(node,lava_map,came_from):
 
         if position[1]+1 < len(lava_map) and direction != "L":
             positions.append(((position[0],position[1]+1),"R"))
-    if position == (7,1):
-        print("POSITION INFO", direction)
-        print(position)
+    if position == (1,7):
+        print("POSITION INFO")
+        print(position, direction)
+        print(positions)
+    if position == (0,7):
+        print("POSITION INFO")
+        print(position, direction)
         print(positions)
     
     return positions
@@ -93,7 +97,7 @@ def astar(start,stop,lava_map):
     g_score[start] = 0
     f_score[start] = 0
     open_nodes = []
-    heapq.heappush(open_nodes,(f_score[start],start))
+    heapq.heappush(open_nodes,(f_score[start],start,"S"))
     
 
     cur_it = 0
