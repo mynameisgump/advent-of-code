@@ -18,6 +18,7 @@ def reconstruct_path(came_from, current):
 
 
 def get_neighbors(node,lava_map,came_from):
+    print("NEW")
     [position, direction] = node
     positions = []
 
@@ -31,6 +32,7 @@ def get_neighbors(node,lava_map,came_from):
         node_4 = came_from[node_3[0]]
         dir_4 = node_4[1]
         if dir_1 == dir_2 == dir_3 == dir_4:
+            print("SAMY")
             if direction == "U" or direction == "D":
                 if position[1]-1 >= 0:
                     positions.append(((position[0],position[1]-1),"L"))
@@ -68,7 +70,7 @@ def get_neighbors(node,lava_map,came_from):
 
         if position[1]+1 < len(lava_map) and direction != "L":
             positions.append(((position[0],position[1]+1),"R"))
-    if position == (1,7):
+    if position == (1,4):
         print("POSITION INFO")
         print(position, direction)
         print(positions)
@@ -97,17 +99,16 @@ def astar(start,stop,lava_map):
     g_score[start] = 0
     f_score[start] = 0
     open_nodes = []
-    heapq.heappush(open_nodes,(f_score[start],start,"S"))
+    heapq.heappush(open_nodes,(f_score[start],(start,"S")))
     
 
     cur_it = 0
     while len(open_nodes) > 0:
-    #while cur_it < 5:
-        [score, current] = heapq.heappop(open_nodes)
-        #print(open_nodes)
+        [score, paired] = heapq.heappop(open_nodes)
+        [current, cur_dir] = paired
         if current == stop:
             return reconstruct_path(came_from, current)
-        neighbors = get_neighbors((current,came_from[current][1]),lava_map,came_from)
+        neighbors = get_neighbors((current,cur_dir),lava_map,came_from)
 
         for neighbor,direction in neighbors:
             tentative_gScore = g_score[current] + lava_map[neighbor[0]][neighbor[1]]
@@ -118,7 +119,7 @@ def astar(start,stop,lava_map):
                 g_score[neighbor] = tentative_gScore
                 f_score[neighbor] = tentative_gScore # + h((neighbor,direction),stop)
                 if (f_score[neighbor],neighbor) not in open_nodes:
-                    heapq.heappush(open_nodes,(f_score[neighbor],neighbor))
+                    heapq.heappush(open_nodes,(f_score[neighbor],(neighbor,direction)))
         cur_it += 1
     # float inf
     
