@@ -70,11 +70,7 @@ def get_neighbors(node,lava_map,came_from):
 
         if position[1]+1 < len(lava_map) and direction != "L":
             positions.append(((position[0],position[1]+1),"R"))
-    if position == (1,4):
-        print("POSITION INFO")
-        print(position, direction)
-        print(positions)
-    if position == (0,7):
+    if position == (1,5):
         print("POSITION INFO")
         print(position, direction)
         print(positions)
@@ -86,7 +82,6 @@ def h(node_1,goal):
     return abs(start[0]-goal[0])+abs(start[1]-goal[1])
 
 def astar(start,stop,lava_map):
-    #print()
     all_nodes = []
     came_from = {(0,0): ((0,0),"S")}
     g_score = {}
@@ -97,7 +92,7 @@ def astar(start,stop,lava_map):
             g_score[(y,x)] = float('inf')
             f_score[(y,x)] = float('inf')
     g_score[start] = 0
-    f_score[start] = 0
+    f_score[start] = h(((0,0),"S"),stop)
     open_nodes = []
     heapq.heappush(open_nodes,(f_score[start],(start,"S")))
     
@@ -112,14 +107,12 @@ def astar(start,stop,lava_map):
 
         for neighbor,direction in neighbors:
             tentative_gScore = g_score[current] + lava_map[neighbor[0]][neighbor[1]]
-            #print(tentative_gScore)
             if tentative_gScore < g_score[neighbor]:
-                #print("Addin")
                 came_from[neighbor] = (current,direction)
                 g_score[neighbor] = tentative_gScore
-                f_score[neighbor] = tentative_gScore # + h((neighbor,direction),stop)
-                if (f_score[neighbor],neighbor) not in open_nodes:
-                    heapq.heappush(open_nodes,(f_score[neighbor],(neighbor,direction)))
+                f_score[neighbor] = tentative_gScore + h((neighbor,direction),stop)
+                #if (f_score[neighbor],neighbor) not in open_nodes:
+                heapq.heappush(open_nodes,(f_score[neighbor],(neighbor,direction)))
         cur_it += 1
     # float inf
     
