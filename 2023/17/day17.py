@@ -7,6 +7,7 @@ parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
 def reconstruct_path(came_from, current):
+    print(came_from)
     total_path = [came_from[current]]
     while current in came_from:
         current = came_from[current][0]
@@ -18,12 +19,12 @@ def reconstruct_path(came_from, current):
 
 
 def get_neighbors(node,lava_map,came_from):
-    print("NEW")
     [position, direction] = node
     positions = []
 
     
-    if len(came_from) > 3:
+    if len(came_from) > 10:
+        print(came_from)
         dir_1 = node[1]
         node_2 = came_from[node[0]]
         dir_2 = node_2[1]
@@ -125,6 +126,80 @@ def astar(start,stop,lava_map):
     #     current = 
     # pass
 
+def dijkstra(start,lava_map):
+    #all_nodes = []
+    #came_from = {(0,0): ((0,0),"S")}
+    #g_score = {}
+    
+    #f_score = {}
+    dist = {}
+    dist[(0,0)] = 0
+    prev = {(0,0): ((0,0),"S")}
+    unvisited_nodes = []
+    for y in range(len(lava_map)):
+        for x in range(len(lava_map[0])):
+            if (y,x) != (0,0):
+                dist[(y,x)] = float('inf')
+                # prev[(y,x)] = None
+            heapq.heappush(unvisited_nodes,(dist[(y,x)],(y,x,"S")))
+    print(unvisited_nodes)
+    #g_score[start] = 0
+    #f_score[start] = h(((0,0),"S"),stop)
+    open_nodes = []
+
+    
+    #heapq.heappush(open_nodes,(f_score[start],(start,"S")))
+    
+
+    # cur_it = 0
+    while len(unvisited_nodes) > 0:
+        [score, location] = heapq.heappop(unvisited_nodes)
+        print(score,location)
+        current = (location[0],location[1])
+        cur_dir = location[2]
+    #     [current, cur_dir] = paired
+    #     if current == stop:
+    #         return reconstruct_path(came_from, current)
+        neighbors = get_neighbors((current,cur_dir),lava_map,prev)
+        for neighbor,direction in neighbors:
+            alt_dist = dist[current]+lava_map[neighbor[0]][neighbor[1]]
+            if alt_dist < dist[neighbor]:
+                print("WOOO")
+                prev[neighbor] = (current,direction)
+                dist[neighbor] = alt_dist
+                heapq.heappush(unvisited_nodes,(alt_dist, (neighbor[0],neighbor[1],direction)))
+
+            print("New Dist: ",alt_dist)
+
+        # alt ← dist[u] + Graph.Edges(u, v)
+        #      if alt < dist[v]:
+        #          dist[v] ← alt
+        #          prev[v] ← u
+        #          Q.decrease_priority(v, alt)
+
+
+        # for neighbor,direction in neighbors:
+        #     tentative_gScore = g_score[current] + lava_map[neighbor[0]][neighbor[1]]
+        #     if tentative_gScore < g_score[neighbor]:
+        #         came_from[neighbor] = (current,direction)
+        #         g_score[neighbor] = tentative_gScore
+        #         f_score[neighbor] = tentative_gScore + h((neighbor,direction),stop)
+        #         heapq.heappush(open_nodes,(f_score[neighbor],(neighbor,direction)))
+        # cur_it += 1
+    # float inf
+    
+    # prev = {}
+    # g_score[start] = 0 
+    # f_score[start] = lava_map[0][0]
+    # openSet = set((f_score[start],start))
+
+    # while len(openSet) > 1:
+    #     current = 
+    # pass
+    print(prev)
+    return reconstruct_path(prev,(len(lava_map)-1,len(lava_map[1])-1))
+
+
 def part1(filename):
     with open(filename) as f:
 
@@ -133,7 +208,8 @@ def part1(filename):
         for row in lava_map:
             print("".join(str(num) for num in row))
 
-        path = astar((0,0),(len(lava_map)-1,len(lava_map[0])-1),lava_map)
+        #path = astar((0,0),(len(lava_map)-1,len(lava_map[0])-1),lava_map)
+        path = dijkstra((0,0),lava_map)
         for node in path:
             char = ""
             match node[1]:
