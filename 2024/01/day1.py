@@ -12,8 +12,8 @@ def part1(filename):
         print("Part 1")
         lines = [line.rstrip().split("  ") for line in f]
         
-        left_list = [item[0] for item in lines]
-        right_list = [item[1] for item in lines]
+        left_list = [int(item[0]) for item in lines]
+        right_list = [int(item[1]) for item in lines]
         left_list.sort()
         right_list.sort()
         print(left_list, right_list)
@@ -22,9 +22,19 @@ def part1(filename):
             abs_dist = abs(int(left_list[i])-int(right_list[i]))
             total += abs_dist
         print(total)
+
 def part2(filename):
-    with open(filename):
+    with open(filename) as f:
         print("Part 2")
+        lines = [line.rstrip().split("  ") for line in f]
+        
+        left_list = [int(item[0]) for item in lines]
+        right_list = [int(item[1]) for item in lines]
+        total = 0 
+        for number in left_list:
+            num_count = right_list.count(number)
+            total += number*num_count
+        print(total)
 
 if __name__ == "__main__":
     input_selection = args.i
