@@ -1,6 +1,8 @@
 import argparse
 import operator
 import re
+from itertools import pairwise
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("s", choices=["p1","p2"])
@@ -10,13 +12,7 @@ args = parser.parse_args();
 def part1(filename):
     with open(filename) as f:
         lines = [line.rstrip().split(" ") for line in f]
-
         print(lines)
-        # Cases:
-        # increase greater then 2
-        # no increase 
-
-    
         total = 0
         for level_str in lines:
             level = [int(item) for item in level_str]
@@ -25,9 +21,11 @@ def part1(filename):
             safe = True
             state = "start"
             i = 0;
+            list_of_changes = []
             while i+1 < len(level):
                 change = level[i]-level[i+1]
                 print(change)
+                list_of_changes.append(change)
                 if state == "start":
                     if change == 0:
                         # Fail
@@ -56,14 +54,36 @@ def part1(filename):
             if safe:
                 total += 1
         print("Total", total)
-        
-
-                #print("Yay")
         pass
 
 def part2(filename):
     with open(filename) as f:
-        pass
+        levels = [[int(item) for item in level] for level in [line.rstrip().split(" ") for line in f]]
+        dec_set = set([1,2,3]);
+        inc_set = set([-1,-2,-3]);
+        total = 0;
+        for level in levels:
+            diff = [a - b for a, b in pairwise(level)]
+            s = set(diff)
+            safe = False
+            if s <= dec_set:
+                safe = True
+            elif s <= inc_set:
+                safe = True
+            else:
+                combinations = [level[:i] + level[i+1:] for i in range(len(level))]
+                for combo in combinations:
+                    combo_set = set([a - b for a, b in pairwise(combo)])
+                    if combo_set <= dec_set:
+                        safe = True
+                    elif combo_set <= inc_set:
+                        safe = True
+            print()
+            if safe:
+                total += 1
+        print(total)
+        
+
 if __name__ == "__main__":
     input_selection = args.i
     solution_selection = args.s;
