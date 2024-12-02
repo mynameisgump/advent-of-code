@@ -9,7 +9,7 @@ parser.add_argument("s", choices=["p1","p2"])
 parser.add_argument("i", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
-def part1(filename):
+def part1_Attempt_1(filename):
     with open(filename) as f:
         lines = [line.rstrip().split(" ") for line in f]
         print(lines)
@@ -56,6 +56,24 @@ def part1(filename):
         print("Total", total)
         pass
 
+def part1(filename):
+    with open(filename) as f:
+        levels = [[int(item) for item in level] for level in [line.rstrip().split(" ") for line in f]]
+        dec_set = set([1,2,3]);
+        inc_set = set([-1,-2,-3]);
+        total = 0;
+        for level in levels:
+            diff = [a - b for a, b in pairwise(level)]
+            s = set(diff)
+            safe = False
+            if s <= dec_set:
+                safe = True
+            elif s <= inc_set:
+                safe = True
+            if safe:
+                total += 1
+        print("Total is: ",total)
+
 def part2(filename):
     with open(filename) as f:
         levels = [[int(item) for item in level] for level in [line.rstrip().split(" ") for line in f]]
@@ -78,10 +96,9 @@ def part2(filename):
                         safe = True
                     elif combo_set <= inc_set:
                         safe = True
-            print()
             if safe:
                 total += 1
-        print(total)
+        print("Total is: ", total)
         
 
 if __name__ == "__main__":
