@@ -1,5 +1,7 @@
 import argparse
 import re
+from functools import cmp_to_key
+
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
@@ -47,9 +49,61 @@ def part1(filename):
         print(total)
                 #Step 1: Check list forwards for 
           
+
+
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        lines = [l.split("\n") for l in f.read().split("\n\n")];
+        rules = [line.split("|") for line in lines[0]]
+        updates = [line.split(",") for line in lines[1]]
+        rulebook = {}
+        reverse_rulebook = {}
+        for rule in rules:
+            if rule[0] in rulebook:
+                rulebook[rule[0]].append(rule[1])
+            else:
+                rulebook[rule[0]] = [rule[1]]
+            if rule[1] in reverse_rulebook:
+                reverse_rulebook[rule[1]].append(rule[0])
+            else:
+                reverse_rulebook[rule[1]] = [rule[0]]
+
+        def sort_algo(a,b):
+            if a in rulebook:
+                rule = rulebook[a];
+                if b in rule:
+                    return -1
+                else:
+                    return 1
+            else:
+                return 0
+
+        total = 0
+        for update in updates:
+            
+            valid = True
+            for index in range(len(update)):
+                value = update[index]
+                before = set(update[:index])
+                after = set(update[index+1:])
+                rule = []
+                if value in rulebook:
+                    rule = set(rulebook[value])
+                
+                if not after.issubset(rule):
+                    valid = False
+
+            if valid == False:
+                print(update)
+                rest = sorted(update,key=cmp_to_key(sort_algo))
+                print(rest)
+                middle_num = int(rest[len(rest)//2])
+                total += middle_num
+                print("Magic Time")
+
+        print(total)
+                #Step 1: Check list forwards for 
+          
 
 if __name__ == "__main__":
     input_selection = args.input
