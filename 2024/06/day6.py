@@ -51,6 +51,7 @@ def part1(filename):
             else:
                 cur_loc = next_step
         total = "".join(["".join(row) for row in map_copy]).count("X")
+        print_map(map_copy)
         print(total)
 
 
