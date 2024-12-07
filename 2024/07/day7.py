@@ -5,7 +5,7 @@ parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
-operators = ["+","*"]
+operators = ["+","*","||"]
 
 # def recursive_calc(first_number,index,numbers,total,goal):
 #     cur_number = 0
@@ -56,6 +56,38 @@ def recursive_calc(total,index,numbers,goal):
                     valid = True
         return valid
 
+def recursive_calc_con(total,index,numbers,goal):
+    if total == 0:
+        total += numbers[0]
+    if index+1 >= len(numbers):
+        if goal == total:
+            #valid_count += 1
+            return True
+        return False
+    else:
+        valid = False
+        for operator in operators:
+            next_number = numbers[index+1]
+            if operator == "+":
+                new_total = total + next_number
+                test_result = recursive_calc_con(new_total,index+1,numbers,goal)
+                if test_result:
+                    valid = True
+                
+            elif operator == "*":
+                new_total = total * next_number
+                test_result = recursive_calc_con(new_total,index+1,numbers,goal)
+                if test_result:
+                    valid = True
+
+            elif operator == "||":
+                new_total = int(str(total) + str(next_number))
+                test_result = recursive_calc_con(new_total,index+1,numbers,goal)
+                if test_result:
+                    valid = True 
+
+        return valid
+
 
 def part1(filename):
     with open(filename) as f:
@@ -67,9 +99,17 @@ def part1(filename):
             if is_valid:
                 final_total += line[0]
         print(final_total)
+
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        lines = [line.split(":") for line in f.read().split("\n")];
+        lines = [[int(line[0]),[int(item) for item in line[1].strip().split(" ")]] for line in lines]
+        final_total = 0
+        for line in lines:
+            is_valid = recursive_calc_con(0,0,line[1],line[0])
+            if is_valid:
+                final_total += line[0]
+        print(final_total)
 
 if __name__ == "__main__":
     input_selection = args.input
