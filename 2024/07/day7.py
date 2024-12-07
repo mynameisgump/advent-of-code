@@ -7,65 +7,66 @@ args = parser.parse_args();
 
 operators = ["+","*"]
 
-def recursive_calc_2(first_number,index,numbers,total,goal):
-    cur_number = 0
-    if first_number == None:
-        cur_number == numbers[0]
-        total = cur_number
-    cur_number = numbers[index]
-    index += 1 
-    if index >= len(numbers):
-        print("Final total: ",total)
-        return
-    else:
-        for operator in operators:
-            if operator == "+":
-                next_number = numbers[index]
-                print(cur_number,"+",next_number)
-                new_total = total+next_number
-                print("Running total: ", total)
-                recursive_calc(index,numbers,total,goal)
-            elif operator == "*":
-                next_number = numbers[index]
-                print(total,"*",next_number)
-                new_total = total*next_number 
-                print("Running total: ", total)
-                recursive_calc(index,numbers,total,goal)
+# def recursive_calc(first_number,index,numbers,total,goal):
+#     cur_number = 0
+#     if first_number == None:
+#         cur_number == numbers[0]
+#         total = cur_number
+#     cur_number = numbers[index]
+#     index += 1 
+#     if index >= len(numbers):
+#         print("Final total: ",total)
+#         return
+#     else:
+#         for operator in operators:
+#             print("Total? ", total)
+#             if operator == "+":
+#                 next_number = numbers[index]
+#                 print(cur_number,"+",next_number)
+#                 new_total = total+next_number
+#                 print("Running total: ", new_total)
+#                 recursive_calc(True,index,numbers,new_total,goal)
+#             elif operator == "*":
+#                 next_number = numbers[index]
+#                 new_total = total*next_number 
+#                 recursive_calc(True,index,numbers,new_total,goal)
 
-def recursive_calc(index,numbers,total,goal):
-    cur_number = numbers[index]
-    index += 1 
-    if index >= len(numbers):
-        print("Final total: ",total)
-        return
+def recursive_calc(total,index,numbers,goal):
+    if total == 0:
+        total += numbers[0]
+    if index+1 >= len(numbers):
+        if goal == total:
+            #valid_count += 1
+            return True
+        return False
     else:
+        valid = False
         for operator in operators:
+            next_number = numbers[index+1]
             if operator == "+":
-                next_number = numbers[index]
-                print(cur_number,"+",next_number)
-                new_total = cur_number+next_number
-                print("Running total: ", new_total)
-                recursive_calc(index,numbers,new_total,goal)
+                new_total = total + next_number
+                test_result = recursive_calc(new_total,index+1,numbers,goal)
+                if test_result:
+                    valid = True
+                
             elif operator == "*":
-                next_number = numbers[index]
-                print(cur_number,"*",next_number)
-                new_total = cur_number*next_number 
-                print("Running total: ", new_total)
-                recursive_calc(index,numbers,new_total,goal)
-            #recursive_calc(in)
-    #next_number = numbers[index+1]
+                new_total = total * next_number
+                test_result = recursive_calc(new_total,index+1,numbers,goal)
+                if test_result:
+                    valid = True
+        return valid
+
 
 def part1(filename):
     with open(filename) as f:
         lines = [line.split(":") for line in f.read().split("\n")];
         lines = [[int(line[0]),[int(item) for item in line[1].strip().split(" ")]] for line in lines]
+        final_total = 0
         for line in lines:
-            print()
-            print("New Line:")
-            recursive_calc_2(None,0,line[1],0,line[0])
-            
-        print(lines)
-
+            is_valid = recursive_calc(0,0,line[1],line[0])
+            if is_valid:
+                final_total += line[0]
+        print(final_total)
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
