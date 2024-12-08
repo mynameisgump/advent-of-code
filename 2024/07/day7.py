@@ -1,5 +1,8 @@
 import argparse
 import re
+import time
+from concurrent.futures import ProcessPoolExecutor
+
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
@@ -100,16 +103,23 @@ def part1(filename):
                 final_total += line[0]
         print(final_total)
 
+def process_line(line):
+    target, numbers = line
+    is_valid = recursive_calc_con(0, 0, numbers, target)
+    return target if is_valid else 0
+
 def part2(filename):
     with open(filename) as f:
+        start_time = time.time()
         lines = [line.split(":") for line in f.read().split("\n")];
         lines = [[int(line[0]),[int(item) for item in line[1].strip().split(" ")]] for line in lines]
         final_total = 0
-        for line in lines:
-            is_valid = recursive_calc_con(0,0,line[1],line[0])
-            if is_valid:
-                final_total += line[0]
-        print(final_total)
+        with ProcessPoolExecutor() as executor:
+            results = list(executor.map(process_line, lines))
+            final_total = sum(results)
+            print(final_total)
+
+        print((time.time() - start_time))
 
 if __name__ == "__main__":
     input_selection = args.input
