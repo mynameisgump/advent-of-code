@@ -68,17 +68,10 @@ def part2(filename):
                 while 0 <= antinode_2[0] < len(lines) and 0 <= antinode_2[1] < len(lines[0]):
                     antinode_positions.add(antinode_2)
                     antinode_2 = (antinode_2[0]-x_dist,antinode_2[1]-y_dist)
-                    print(antinode_2)
+                    
                 antinode_positions.add(pair[0])
                 antinode_positions.add(pair[1])
-                # antinode_positions.add((pair[0][0]+x_dist,pair[0][1]+y_dist))
-                # antinode_positions.add()
 
-
-        for antinode in antinode_positions:
-            lines[antinode[0]][antinode[1]] = "#"
-        for line in lines:
-            print("".join(line))
         print(len(antinode_positions))
 
 if __name__ == "__main__":
