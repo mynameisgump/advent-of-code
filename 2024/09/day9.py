@@ -17,7 +17,7 @@ def part1(filename):
         for char in line:
             if f_or_s == "f":
                 char_i = int(char)
-                base_list = base_list + list((str(cur_id)*int(char)))
+                base_list = base_list + [str(cur_id)]*int(char)
                 f_or_s = "s"
                 cur_id += 1
             else:
@@ -33,24 +33,28 @@ def part1(filename):
         
 
         final_list = base_list
-        #print(final_list)
         for char_i in range(len(final_list)-1, -1, -1):
             print(char_i,"/",len(final_list))
             char = base_list[char_i]
-            #print(char)
             if char != ".":
                 final_list[char_i] = "."
                
                 r_index = empty_indexes.pop(0)
                 final_list[r_index] = char
                 if "." not in "".join(final_list)[0:char_i]:
-
                     break
-                # print("".join(final_list)[0:char_i])
+        
+        final_sum = 0
+        cur_i = 0
+        for item in final_list:
+            if item == ".":
+                break
+            else:
+                # print(item)
+                final_sum += int(item) * cur_i
+                cur_i += 1
+        print(final_sum)
 
-        print("".join(final_list))
-        # print("Crying")
-        # print((time.time() - start_time))
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
