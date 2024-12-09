@@ -11,6 +11,7 @@ def part1(filename):
     with open(filename) as f:
         start_time = time.time()
         line = f.read().split("\n")[0];
+
         f_or_s = "f"
         cur_id = 0
         base_list = []
@@ -31,19 +32,21 @@ def part1(filename):
             if char == ".":
                 empty_indexes.append(char_i)
         
-
         final_list = base_list
+        print("".join(final_list))
+
         for char_i in range(len(final_list)-1, -1, -1):
-            print(char_i,"/",len(final_list))
             char = base_list[char_i]
+            print(char)
             if char != ".":
                 final_list[char_i] = "."
                
                 r_index = empty_indexes.pop(0)
                 final_list[r_index] = char
-                if "." not in "".join(final_list)[0:char_i]:
+                if final_list[0:char_i].count(".") == 0:
                     break
-        
+        # print("".join(final_list))
+        # print(final_list)
         final_sum = 0
         cur_i = 0
         for item in final_list:
@@ -51,7 +54,7 @@ def part1(filename):
                 break
             else:
                 # print(item)
-                final_sum += int(item) * cur_i
+                final_sum += cur_i * int(item) 
                 cur_i += 1
         print(final_sum)
 
