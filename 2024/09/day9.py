@@ -59,6 +59,21 @@ def print_tuple_list(tuple_list):
     for item in tuple_list:
         final_string = final_string + str(item[0])*item[1]
     print(final_string)
+
+def calc_tuple_list_sum(tuple_list):
+    final_list = []
+    for item in tuple_list:
+        final_list = final_list + [item[0]]*item[1]
+    print(final_list)
+    final_sum = 0
+    cur_i = 0
+    for item in final_list:
+        if item != ".":
+            final_sum += cur_i * int(item) 
+        cur_i += 1
+    print(final_sum)
+
+
 # Switching to ranges
 def part2(filename):
     with open(filename) as f:
@@ -116,7 +131,7 @@ def part2(filename):
 
 
                         break
-        print_tuple_list(final_list)
+        calc_tuple_list_sum(final_list)
         # print()
         # print("Goal:")
         # print("00...111...2...333.44.5555.6666.777.888899")
