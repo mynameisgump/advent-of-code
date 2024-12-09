@@ -1,6 +1,7 @@
 import argparse
 import re
 import time
+import numpy as np
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
@@ -12,29 +13,31 @@ def part1(filename):
         line = f.read().split("\n")[0];
         f_or_s = "f"
         cur_id = 0
-        final_string = ""
+        base_list = []
         for char in line:
             if f_or_s == "f":
                 char_i = int(char)
-                final_string = final_string + (str(cur_id)*int(char))
+                base_list = base_list + list((str(cur_id)*int(char)))
                 f_or_s = "s"
                 cur_id += 1
             else:
                 char_i = int(char)
-                final_string = final_string + ("."*int(char))
+                base_list = base_list + list(("."*int(char)))
                 f_or_s = "f"
         
         empty_indexes = []
-        for char_i in range(len(final_string)):
-            char = final_string[char_i]
+        for char_i in range(len(base_list)):
+            char = base_list[char_i]
             if char == ".":
                 empty_indexes.append(char_i)
         
-        final_list = list(final_string)
-        print(len(final_list))
+
+        final_list = base_list
+        #print(final_list)
         for char_i in range(len(final_list)-1, -1, -1):
             print(char_i,"/",len(final_list))
-            char = final_string[char_i]
+            char = base_list[char_i]
+            #print(char)
             if char != ".":
                 final_list[char_i] = "."
                
@@ -43,11 +46,11 @@ def part1(filename):
                 if "." not in "".join(final_list)[0:char_i]:
 
                     break
-                #print("".join(final_list)[0:char_i])
+                # print("".join(final_list)[0:char_i])
 
         print("".join(final_list))
-        print("Crying")
-        print((time.time() - start_time))
+        # print("Crying")
+        # print((time.time() - start_time))
 def part2(filename):
     with open(filename) as f:
         lines = f.read().split("\n");
