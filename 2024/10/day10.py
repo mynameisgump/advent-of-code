@@ -32,7 +32,7 @@ def find_trail(position,matrix,path):
     count = 0
     value = int(matrix[position[0]][position[1]])
     if value == 9:
-        return path
+        return True
     neighbours = get_neighbours(position,len(matrix),len(matrix[0]))
     for n in neighbours:
         n_val = int(matrix[n[0]][n[1]])
@@ -40,7 +40,7 @@ def find_trail(position,matrix,path):
             path.append((n[0],n[1]))
             new_path = find_trail((n[0],n[1]),matrix,path)
             if new_path:
-                count += 1
+                count += new_path
             #print(new_path)
     if count > 0:
         return count
@@ -53,15 +53,16 @@ def part1(filename):
         max_w = len(lines[0])
         print_matrix(lines)
         print()
+        total = 0 
         for x in range(len(lines)):
             for y in range(len(lines[x])):
                 value = lines[x][y]
-                
                 if value == "0": 
                     print("New Zero: ",([x],[y]))
                     test = find_trail((x,y),lines,[(x,y)])
                     print(test)
-                
+                    total += test
+        print("Final Total: ", total)
 
 def part2(filename):
     with open(filename) as f:
