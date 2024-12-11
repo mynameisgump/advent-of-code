@@ -10,7 +10,9 @@ def part1(filename):
         lines = f.read().split("\n")[0].split(" ");
         blinks = 25
         current_index = 0
+
         for i in range(blinks):
+            print(f'{i}/{blinks}')
             while current_index < len(lines):
                 stone = lines[current_index]
                 if int(stone) == 0:
@@ -24,7 +26,7 @@ def part1(filename):
                     
                 current_index += 1
             current_index = 0
-            print(" ".join(lines))
+            #print(" ".join(lines))
         print(len(lines))
 
 def part2(filename):
