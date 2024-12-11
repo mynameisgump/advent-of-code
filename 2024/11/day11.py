@@ -3,47 +3,20 @@ import re
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 import numpy as np
-
-
+from collections import Counter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("solution", choices=["p1","p2"])
 parser.add_argument("input", choices=["i1","ex1","ex2"])
 args = parser.parse_args();
 
-def process_chunk(stone_chunk, chunk_size):
-
-    current_index = 0
-    new_chunks = []
-    
-    while current_index < len(stone_chunk):
-        stone = stone_chunk[current_index]
-        if int(stone) == 0:
-            stone_chunk[current_index] = str(1)
-        elif len(stone) % 2 == 0:
-            new_stones = [str(int(stone[:len(stone)//2])), str(int(stone[len(stone)//2:]))]
-            stone_chunk[current_index:current_index+1] = new_stones
-            current_index += 1
-        else:
-            stone_chunk[current_index] = str(int(stone_chunk[current_index]) * 2024)
-        current_index += 1
-
-    if len(stone_chunk) > chunk_size:
-        new_chunks.append(stone_chunk[:len(stone_chunk)//2])
-        new_chunks.append(stone_chunk[len(stone_chunk)//2:])
-    else:
-        new_chunks.append(stone_chunk)
-    
-    return new_chunks
-
 def part1(filename):
     with open(filename) as f:
         lines = f.read().split("\n")[0].split(" ");
-        blinks = 25
+        blinks = 11
         current_index = 0
 
         for i in range(blinks):
-            print(f'{i}/{blinks}')
             while current_index < len(lines):
                 stone = lines[current_index]
                 if int(stone) == 0:
@@ -57,32 +30,27 @@ def part1(filename):
                     
                 current_index += 1
             current_index = 0
-            #print(" ".join(lines))
         print(len(lines))
 
 def part2(filename):
     with open(filename) as f:
         blinks = 75
-        chunk_size = 5000
-        stone_chunks = [f.read().split("\n")[0].split(" ")]
+        stone_dict = dict(Counter(f.read().split("\n")[0].split(" ")))
 
-        for i in range(blinks):
-            print(f'Blinks: {i}/{blinks}')
-            new_chunks = []
-            
-            # Use ThreadPoolExecutor for parallel processing
-            with ThreadPoolExecutor() as executor:
-                # Process all chunks in parallel
-                futures = [executor.submit(process_chunk, chunk, chunk_size) for chunk in stone_chunks]
-                for future in futures:
-                    new_chunks.extend(future.result())  # Collect results
-            
-            stone_chunks = new_chunks
-
-        # Calculate the final total
-        final_total = sum(len(chunk) for chunk in stone_chunks)
-        print(f"Final total: {final_total}")
-
+        for blink in range(blinks):
+            new_stones = {}
+            for stone, stone_value in stone_dict.items():
+                if int(stone) == 0:
+                    new_stones["1"] = new_stones.get("1", 0) + stone_value
+                elif len(str(stone)) % 2 == 0:
+                    left_stone, right_stone = str(int(stone[:len(stone)//2])),str(int(stone[len(stone)//2:]))
+                    new_stones[left_stone] = new_stones.get(left_stone, 0) + stone_value
+                    new_stones[right_stone] = new_stones.get(right_stone, 0) + stone_value
+                else:
+                    stone_mult = str(int(stone)*2024)
+                    new_stones[stone_mult] = new_stones.get(stone_mult, 0) + stone_value
+            stone_dict = {key: value for key, value in new_stones.items() if value != 0}
+        print(sum(stone_dict.values()))
 
 
 
@@ -99,4 +67,4 @@ if __name__ == "__main__":
         case "p1":
             part1(filename)
         case "p2":
-            part2(filename)
+            part2(filename) 
