@@ -30,17 +30,22 @@ def get_neighbours(position,max_h,max_w):
 
 def find_trail(position,matrix,path):
     count = 0
-    value = int(matrix[position[0]][position[1]])
+    value = matrix[position[0]][position[1]] 
+    if value != ".":
+        value = int(value)
     if value == 9:
+        print(path)
         return True
     neighbours = get_neighbours(position,len(matrix),len(matrix[0]))
     for n in neighbours:
-        n_val = int(matrix[n[0]][n[1]])
-        if n_val == value+1 and (n[0],n[1]) not in path:
-            path.append((n[0],n[1]))
-            new_path = find_trail((n[0],n[1]),matrix,path)
-            if new_path:
-                count += new_path
+        n_val = matrix[n[0]][n[1]]
+        if n_val != ".":
+            n_val = int(n_val)
+            if n_val == value+1 and (n[0],n[1]) not in path:
+                # path.append()
+                new_path = find_trail((n[0],n[1]),matrix,path+[(n[0],n[1])])
+                if new_path:
+                    count += new_path
             #print(new_path)
     if count > 0:
         return count
@@ -66,7 +71,21 @@ def part1(filename):
 
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        lines = [list(line) for line in f.read().split("\n")];
+        max_h = len(lines)
+        max_w = len(lines[0])
+        print_matrix(lines)
+        print()
+        total = 0 
+        for x in range(len(lines)):
+            for y in range(len(lines[x])):
+                value = lines[x][y]
+                if value == "0": 
+                    print("New Zero: ",([x],[y]))
+                    test = find_trail((x,y),lines,[(x,y)])
+                    print(test)
+                    total += test
+        print("Final Total: ", total)
 
 if __name__ == "__main__":
     input_selection = args.input
