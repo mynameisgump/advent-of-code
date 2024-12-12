@@ -21,7 +21,7 @@ if __name__ == "__main__":
         case "i1":
             filename="input.txt"
         case "ex1":
-            filename="example1.txt"
+            filename="ex1.txt"
     match solution_selection:
         case "p1":
             part1(filename)
