@@ -87,7 +87,28 @@ def part1(filename):
 
 def part2(filename):
     with open(filename) as f:
-        lines = f.read().split("\n");
+        map_in, movements = f.read().split("\n\n");
+        old_map = [list(line) for line in map_in.split("\n")]
+        w_map = []
+        # print(old_map)
+        for row in old_map:
+            new_row = []
+            # print(row)
+            for col in row:
+                print(col)
+                if col == "#":
+                    new_row.extend(["#","#"])
+                elif col == "O":
+                    new_row.extend(["[","]"])
+                elif col == ".":
+                    new_row.extend([".","."])
+                elif col == "@":
+                    new_row.extend(["@","."])
+                print(new_row)
+            w_map.append(new_row)
+        print(w_map)
+        print_matrix(w_map)
+        movements = "".join(movements.split("\n"))
 
 if __name__ == "__main__":
     input_selection = args.input
