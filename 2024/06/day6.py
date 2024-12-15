@@ -64,7 +64,6 @@ def part1(filename):
         for x in range(len(guard_map)):
             for y in range(len(guard_map[x])):
                 if guard_map[x][y] == "^":
-                    #print("Found: ", x,y)
                     start = [x,y]
         walking = True 
         direction = "^"
