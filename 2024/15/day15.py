@@ -96,33 +96,6 @@ def move(cur_loc, direction, w_map):
     di, dj = directions[direction]
     next_i, next_j = i + di, j + dj
 
-# def part1_r(filename):
-#     map_in, movements = f.read().split("\n\n");
-#     w_map = [list(line) for line in map_in.split("\n")]
-#     cur_loc = next((i, j) for i, row in enumerate(w_map) for j, val in enumerate(row) if val == '@')
-#     movements = "".join(movements.split("\n"))
-#     for direction in movements:   
-#         next_step = []
-#         if direction == "^":
-#             next_step = [cur_loc[0]-1,cur_loc[1]]
-#         elif direction == ">":
-#             next_step = [cur_loc[0],cur_loc[1]+1]
-#         elif direction == "<":
-#             next_step = [cur_loc[0],cur_loc[1]-1]
-#         elif direction == "v":
-#             next_step = [cur_loc[0]+1,cur_loc[1]]
-
-#         if len(next_step) == 0:
-#             break
-#         if next_step[0] >= len(w_map) or next_step[0] < 0 or next_step[1] >= len(w_map[0]) or next_step[1] < 0:
-#             break
-
-#         next_char = w_map[next_step[0]][next_step[1]]
-#         if next_char == ".":
-#             w_map[next_step[0]][next_step[1]] = "@"
-#             w_map[cur_loc[0]][cur_loc[1]] = "."
-#             cur_loc = next_step
-#         elif next_char == "0":
 
 def convert_map(old_map):
     new_map = []
@@ -143,9 +116,8 @@ def convert_map(old_map):
 def box_can_move(box,direction_vec,w_map):
     pos_1 = (box[0][0]+direction_vec[0],box[0][1]+direction_vec[1])
     pos_2 = (box[1][0]+direction_vec[0],box[1][1]+direction_vec[1])
-    print(w_map[pos_1[0]][pos_1[1]],w_map[pos_1[0]][pos_1[1]])
+
     if w_map[pos_1[0]][pos_1[1]] != "#" and w_map[pos_2[0]][pos_2[1]] != "#":
-        print("Box Can move")
         return True
     return False
 
@@ -156,42 +128,56 @@ def move_box(box,direction_vec,w_map):
 
     box_1_clone = w_map[box[0][0]][box[0][1]]
     box_2_clone = w_map[box[1][0]][box[1][1]]
-    print("Boxndir:",box,direction_vec)
-    print("Positions ", pos_1,pos_2)
-    print("Clones: ", box_1_clone,box_2_clone)
-    
-    # w_map[pos_1[0]][pos_1[1]] = w_map[box[0][0]][box[0][1]]
-    # w_map[pos_2[0]][pos_2[1]] = w_map[box[1][0]][box[1][1]]
+
     w_map[box[0][0]][box[0][1]] = "."
     w_map[box[1][0]][box[1][1]] = "."
 
     w_map[pos_1[0]][pos_1[1]] = box_1_clone
     w_map[pos_2[0]][pos_2[1]] = box_2_clone
 
-    
-    print("Move_box_w_map")
-    print_matrix(w_map)
+    # print("Push Loop:")
+    # print_matrix(w_map)
 def push(location,direction,w_map):
+    # print("Push")
+    # print(location)
     direction_vec = directions[direction]
     current_character = w_map[location[0]][location[1]]
     box = []
-    print("Loc: ",location)
+    # print("Loc: ",location)
     if current_character == "[":
         box = (location,[location[0],location[1]+1])
     elif current_character == "]":
         box = (location,[location[0],location[1]-1]) 
-    print(box)
+    # print(box)
     if len(box) > 0:
         combined = tuple(a + b for a, b in zip(location, tuple(x * 2 for x in direction_vec)))
-        print(direction_vec*2)
-        if not box_can_move(box,direction_vec,w_map):
-            return False
-            
-        if not push(combined,direction,w_map):
-            return False
-        print("Box before move",box)
-        move_box(box,direction_vec,w_map);
+        if direction == ">" or direction == "<":
+            combined = tuple(a + b for a, b in zip(location, tuple(x * 2 for x in direction_vec)))
+            # combined_2 = tuple(a + b for a, b in zip(box[1], tuple(x * 2 for x in direction_vec)))
+            # print(direction_vec*2)
+            if not box_can_move(box,direction_vec,w_map):
+                return False
+                
+            if not push(combined,direction,w_map):
+                return False
+            # print("Box before move",box)
+            move_box(box,direction_vec,w_map);
         
+        if direction =="^" or direction == "v":
+            combined_1 = tuple(a + b for a, b in zip(box[0], direction_vec))
+            combined_2 = tuple(a + b for a, b in zip(box[1], direction_vec))
+            # print(box)
+            # print(combined_1,combined_2)
+            if not box_can_move(box,direction_vec,w_map):
+                return False
+            push_1 = push(combined_1,direction,w_map)
+            push_2 = push(combined_2,direction,w_map)
+            if not push_1 or not push_2:
+                return False
+
+            # print("Box before move",box)
+            move_box(box,direction_vec,w_map);
+            
     return True
 
 def part2(filename):
@@ -199,13 +185,11 @@ def part2(filename):
         map_in, movements = f.read().split("\n\n");
         old_map = [list(line) for line in map_in.split("\n")]
         w_map = convert_map(old_map)
-        
-        
+
         movements = "".join(movements.split("\n"))
         cur_loc = next((i, j) for i, row in enumerate(w_map) for j, val in enumerate(row) if val == '@')
-        print_matrix(w_map)
         for direction in movements:
-            print()   
+            # print()   
             next_step = []
             if direction == "^":
                 next_step = [cur_loc[0]-1,cur_loc[1]]
@@ -227,13 +211,29 @@ def part2(filename):
                 w_map[cur_loc[0]][cur_loc[1]] = "."
                 cur_loc = next_step
             elif next_char in "[]":
-                push(next_step,direction,w_map)
+                mat_copy = [row[:] for row in w_map]
+                test = push(next_step,direction,mat_copy)
+                if test:
+                   push(next_step,direction,w_map) 
                 next_char = w_map[next_step[0]][next_step[1]] 
                 if next_char == ".":
                     w_map[next_step[0]][next_step[1]] = "@"
                     w_map[cur_loc[0]][cur_loc[1]] = "."
                     cur_loc = next_step 
-            print_matrix(w_map)
+            # print(direction)
+            # print_matrix(w_map)
+        total = 0
+        for x in range(len(w_map)):
+            test_string = ""
+            
+            for y in range(len(w_map[x])):
+                test_string += w_map[x][y]
+                if w_map[x][y] == "[":
+                    total += 100 * x + y
+                    print(100 * x + y)
+            # print(test_string)
+        print_matrix(w_map)
+        print(total)
 
 if __name__ == "__main__":
     input_selection = args.input
